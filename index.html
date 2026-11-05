@@ -216,7 +216,8 @@
             <span class="pill-inline bg-flat-purple text-white font-extrabold"><i
                 class="fa-solid fa-square-root-variable text-xl"></i> MTK</span>
             Lebih
-            <span class="pill-inline bg-flat-mint text-slate-950 font-extrabold"><i class="fa-solid fa-bolt text-xl"></i>
+            <span class="pill-inline bg-flat-mint text-slate-950 font-extrabold"><i
+                class="fa-solid fa-bolt text-xl"></i>
               Seru</span>
             &
             <span class="pill-inline bg-flat-yellow text-slate-950 font-extrabold"><i
@@ -340,10 +341,11 @@
               </div>
             </div>
             <h3 class="text-2xl font-black text-emerald-950 font-heading">
-              Latihan Soal & Retake Limit
+              Latihan Soal Interaktif
             </h3>
             <p class="text-xs sm:text-sm text-emerald-900 font-medium leading-relaxed break-words">
-              Pilih tingkat kesulitan Easy, Medium, dan Hard. Dilengkapi timer realtime dan evaluasi kunci pembahasan.
+              Pilih tingkat kesulitan Easy, Medium, dan Hard. Bebas berlatih berkali-kali tanpa batas pengulangan untuk
+              mengasah pemahaman matematika.
             </p>
           </div>
 
@@ -458,7 +460,8 @@
         <div class="bento-card bg-flat-charcoal p-7 flex flex-col justify-between h-full space-y-4">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 font-black text-[10px] uppercase tracking-wider">
+              <span
+                class="px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 font-black text-[10px] uppercase tracking-wider">
                 TOPIK POPULER
               </span>
               <div class="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center text-lg">
@@ -532,10 +535,12 @@
         <!-- Segmented Controls Toolbar: Jenjang & Kelas -->
         <div class="bento-card p-5 sm:p-6 space-y-4">
           <!-- Segment 1: Jenjang Selector -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800">
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
               <span class="text-xs font-black uppercase text-slate-500 font-heading shrink-0">1. Jenjang:</span>
-              <div class="inline-flex p-1 rounded-2xl bg-slate-100 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700">
+              <div
+                class="inline-flex p-1 rounded-2xl bg-slate-100 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700">
                 <button id="btnFilterSD"
                   class="jenjang-filter-btn active px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
                   <i class="fa-solid fa-child text-sm"></i>
@@ -554,7 +559,8 @@
               </div>
             </div>
 
-            <span id="selectedJenjangBadge" class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-purple text-white text-xs font-bold shrink-0">
+            <span id="selectedJenjangBadge"
+              class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-purple text-white text-xs font-bold shrink-0">
               SD (Kelas 1 - 6)
             </span>
           </div>
@@ -568,7 +574,8 @@
               </div>
             </div>
 
-            <span id="selectedKelasBadge" class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-blue text-white text-xs font-bold shrink-0">
+            <span id="selectedKelasBadge"
+              class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-blue text-white text-xs font-bold shrink-0">
               Kelas 1 SD
             </span>
           </div>
@@ -641,16 +648,16 @@
             <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
               <i class="fa-solid fa-list-check text-[#FACC15]"></i> 2. Sifat-Sifat & Teorema Utama
             </h3>
-            <div id="detailPropertiesBody" class="grid sm:grid-cols-2 gap-4 text-xs sm:text-sm math-container"></div>
+            <div id="detailPropertiesBody" class="grid sm:grid-cols-2 gap-4 text-xs sm:text-sm"></div>
           </div>
 
-          <div class="space-y-3">
+          <div id="detailVisualSection" class="space-y-3">
             <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
               <i class="fa-solid fa-chart-pie text-[#34D399]"></i> 3. Visualisasi Diagram & Grafik
             </h3>
             <div
               class="p-6 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex flex-col items-center justify-center">
-              <div id="detailVisualSvg" class="w-full max-w-md"></div>
+              <div id="detailVisualSvg" class="w-full max-w-2xl flex items-center justify-center"></div>
               <span id="detailVisualCaption" class="text-xs text-slate-500 font-bold mt-3 text-center">
                 Diagram Visualisasi Konsep
               </span>
@@ -658,7 +665,8 @@
           </div>
 
           <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
-            <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
+            <h3 id="detailExampleHeading"
+              class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
               <i class="fa-solid fa-lightbulb text-[#3B82F6]"></i> 4. Contoh Soal Interaktif & Pembahasan
             </h3>
             <div id="detailExampleProblemsContainer" class="space-y-4"></div>
@@ -694,30 +702,82 @@
           </p>
         </div>
 
-        <!-- Segmented Controls: Jenjang & Kelas -->
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700/80 space-y-3.5">
+        <!-- Segmented Controls: Jenjang & Kategori Latihan -->
+        <div
+          class="p-5 rounded-2xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700/80 space-y-4">
+          <!-- Step 1: Jenjang -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <label class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading">
-              1. Pilih Jenjang:
+              1. Pilih Jenjang Pendidikan:
             </label>
-            <div class="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700">
-              <button id="btnQuizJenjangSD" class="quiz-jenjang-btn active px-4 py-1.5 text-xs font-bold rounded-lg transition">
-                SD
+            <div
+              class="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700">
+              <button id="btnQuizJenjangSD"
+                class="quiz-jenjang-btn active px-4 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-solid fa-child"></i>
+                <span>SD</span>
               </button>
-              <button id="btnQuizJenjangSMP" class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition">
-                SMP
+              <button id="btnQuizJenjangSMP"
+                class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>SMP</span>
               </button>
-              <button id="btnQuizJenjangSMA" class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition">
-                SMA/SMK
+              <button id="btnQuizJenjangSMA"
+                class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>SMA/SMK</span>
               </button>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 border-t border-slate-200 dark:border-zinc-700/60 pt-3">
-            <label class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading shrink-0">
-              2. Pilih Kelas:
-            </label>
-            <div id="quizKelasOptionsContainer" class="flex flex-wrap gap-1.5 items-center"></div>
+          <!-- Step 2: Dua Kategori Utama Sesuai Spesifikasi -->
+          <div class="border-t border-slate-200 dark:border-zinc-700/60 pt-3.5 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+              <label
+                class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading">
+                2. Pilih Kategori Latihan:
+              </label>
+              <span id="selectedCategoryPill"
+                class="text-[11px] font-bold px-3 py-1 rounded-full bg-flat-purple text-white w-fit">
+                Seluruh Kelas SD (Ujian Komprehensif)
+              </span>
+            </div>
+
+            <!-- Tipe 1: Kategori Ujian Komprehensif (Campuran) -->
+            <div
+              class="p-3.5 rounded-xl bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-layer-group text-[#7C3AED] text-sm"></i>
+                  <span class="text-xs font-black text-slate-900 dark:text-white font-heading">
+                    Kategori Ujian Komprehensif (Campuran Materi)
+                  </span>
+                </div>
+                <span
+                  class="text-[10px] font-bold text-purple-600 dark:text-purple-300 bg-purple-100 dark:bg-purple-900/60 px-2 py-0.5 rounded-md">
+                  Acakan Materi
+                </span>
+              </div>
+              <div id="quizKomprehensifContainer" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <!-- Tipe 2: Kategori Spesifik Kelas -->
+            <div
+              class="p-3.5 rounded-xl bg-slate-100/70 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-700/60 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-graduation-cap text-[#10B981] text-sm"></i>
+                  <span class="text-xs font-black text-slate-900 dark:text-white font-heading">
+                    Kategori Spesifik Per Kelas
+                  </span>
+                </div>
+                <span
+                  class="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
+                  Sesuai Kurikulum Kelas
+                </span>
+              </div>
+              <div id="quizKelasOptionsContainer" class="flex flex-wrap gap-2 items-center"></div>
+            </div>
           </div>
         </div>
 
@@ -728,30 +788,30 @@
             3. Pilih Tingkat Kesulitan:
           </label>
           <div class="grid sm:grid-cols-3 gap-3">
-            <button id="btnDiffEasy"
-              class="quiz-diff-btn p-4 text-left space-y-1.5">
+            <button id="btnDiffEasy" class="quiz-diff-btn p-4 text-left space-y-1.5">
               <div class="flex items-center justify-between">
-                <span class="diff-badge-easy px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[10px]">EASY</span>
+                <span
+                  class="diff-badge-easy px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[10px]">EASY</span>
                 <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
               </div>
               <div class="font-black text-sm font-heading">5 Soal PG</div>
               <div class="text-[11px] font-bold">1 Benar = 20 Poin</div>
             </button>
 
-            <button id="btnDiffMedium"
-              class="quiz-diff-btn p-4 text-left space-y-1.5">
+            <button id="btnDiffMedium" class="quiz-diff-btn p-4 text-left space-y-1.5">
               <div class="flex items-center justify-between">
-                <span class="diff-badge-medium px-2.5 py-0.5 rounded-md bg-amber-500 text-white font-black text-[10px]">MEDIUM</span>
+                <span
+                  class="diff-badge-medium px-2.5 py-0.5 rounded-md bg-amber-500 text-white font-black text-[10px]">MEDIUM</span>
                 <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
               </div>
               <div class="font-black text-sm font-heading">10 Soal PG</div>
               <div class="text-[11px] font-bold">1 Benar = 10 Poin</div>
             </button>
 
-            <button id="btnDiffHard"
-              class="quiz-diff-btn p-4 text-left space-y-1.5">
+            <button id="btnDiffHard" class="quiz-diff-btn p-4 text-left space-y-1.5">
               <div class="flex items-center justify-between">
-                <span class="diff-badge-hard px-2.5 py-0.5 rounded-md bg-rose-500 text-white font-black text-[10px]">HARD</span>
+                <span
+                  class="diff-badge-hard px-2.5 py-0.5 rounded-md bg-rose-500 text-white font-black text-[10px]">HARD</span>
                 <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
               </div>
               <div class="font-black text-sm font-heading">25 Soal PG</div>
@@ -766,14 +826,15 @@
           <div class="flex items-center gap-3">
             <i class="fa-solid fa-clock-rotate-left text-[#7C3AED] text-xl"></i>
             <div>
-              <strong class="block text-xs font-black text-slate-900 dark:text-white font-heading">Status Percobaan
-                (Retake Limit):</strong>
-              <span id="retakeAttemptText" class="text-xs font-bold text-slate-500 dark:text-slate-400">Pengerjaan Ke-1
-                dari Maksimal 3 Kali</span>
+              <strong class="block text-xs font-black text-slate-900 dark:text-white font-heading">Status
+                Percobaan:</strong>
+              <span id="retakeAttemptText" class="text-xs font-bold text-slate-500 dark:text-slate-400">Bebas Mengulang
+                Kapan Saja Tanpa Batas</span>
             </div>
           </div>
-          <span id="retakeCountBadge" class="px-3 py-1 rounded-xl bg-flat-purple text-white text-xs font-bold">
-            Sisa 3x
+          <span id="retakeCountBadge"
+            class="px-3 py-1 rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-extrabold flex items-center gap-1">
+            <i class="fa-solid fa-infinity"></i> Unlimited
           </span>
         </div>
 
@@ -960,13 +1021,11 @@
           </div>
 
           <div class="flex items-center gap-3 text-xs font-bold">
-            <div
-              class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 flex items-center gap-1.5">
+            <div class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 flex items-center gap-1.5">
               <i class="fa-solid fa-coins"></i>
               <span>Koin: <span id="gameCoinCount">0</span></span>
             </div>
-            <div
-              class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 flex items-center gap-1.5">
+            <div class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 flex items-center gap-1.5">
               <i class="fa-solid fa-trophy"></i>
               <span>Skor: <span id="gameScoreCount">0</span></span>
             </div>
@@ -977,7 +1036,8 @@
         </div>
 
         <!-- Flat Minimalist Console Screen Container with Aspect Video (16:9) -->
-        <div class="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border-2 border-[#150F0B] shadow-inner flex items-center justify-center">
+        <div
+          class="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border-2 border-[#150F0B] shadow-inner flex items-center justify-center">
           <canvas id="healingGameCanvas" width="800" height="400"
             class="w-full h-full object-contain block bg-slate-950 cursor-pointer">
             Browser tidak mendukung Canvas 2D HTML5.
@@ -1068,15 +1128,19 @@
             <p class="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium break-words">
               MathVerse dirancang untuk menghadirkan pengalaman belajar matematika yang menyenangkan, komprehensif, dan
               visual bagi siswa SD, SMP, hingga SMA/SMK. Dilengkapi modul rangkuman materi interaktif, latihan soal
-              berkonfigurasi dengan pembatasan retake, serta mini game platformer 2D untuk penyegaran.
+              berkonfigurasi bebas retake tanpa batas, serta mini game platformer 2D untuk penyegaran.
             </p>
           </div>
 
           <div class="pt-4 border-t border-slate-900/10 flex flex-wrap gap-2">
-            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">12 Jenjang Kelas</span>
-            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">LaTeX Formula MathJax</span>
-            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Cloud Firestore Sync</span>
-            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Mini Game Healing</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">12 Jenjang
+              Kelas</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">LaTeX Formula
+              MathJax</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Cloud Firestore
+              Sync</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Mini Game
+              Healing</span>
           </div>
         </div>
 
@@ -1254,46 +1318,212 @@
 
   <!-- 3. SCORE & PEMBAHASAN RESULT MODAL -->
   <div id="quizScoreResultModal"
-    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 hidden opacity-0 transition-opacity duration-200">
     <div
-      class="bg-white dark:bg-[#181818] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 space-y-6">
+      class="bg-white dark:bg-[#181818] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-8 border border-slate-200 dark:border-zinc-800 space-y-6 shadow-2xl">
 
-      <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
-        <div>
-          <span class="text-xs font-black text-[#7C3AED] uppercase tracking-wider">HASIL EVALUASI</span>
-          <h3 class="text-xl font-black text-slate-900 dark:text-white font-heading">Skor & Pembahasan Kuis</h3>
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+        <div class="flex items-center gap-3.5">
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white flex items-center justify-center text-xl shadow-md">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-black text-[#7C3AED] uppercase tracking-wider">LAPORAN EVALUASI</span>
+              <span id="resultModalHeaderBadge"
+                class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">
+                Kuis Selesai
+              </span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-heading mt-0.5">
+              Skor & Pembahasan Evaluasi
+            </h3>
+            <p id="resultModalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Ringkasan performa dan penjelasan menyeluruh soal latihan matematika.
+            </p>
+          </div>
         </div>
         <button id="btnCloseQuizScoreResultModal"
-          class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
+          class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition"
+          title="Tutup Hasil Evaluasi">
+          <i class="fa-solid fa-xmark text-base"></i>
         </button>
       </div>
 
-      <div class="grid grid-cols-3 gap-3 text-center p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800">
-        <div>
-          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Total Skor</span>
-          <div id="resultModalScore" class="text-3xl font-black text-[#7C3AED] font-heading">100</div>
-          <span id="resultModalBadge"
-            class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-flat-mint text-emerald-950">
-            Sangat Baik
-          </span>
+      <!-- Bento Grid 4 Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Card 1: Nilai Akhir -->
+        <div
+          class="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-purple-50/80 to-purple-100/30 dark:from-purple-950/40 dark:to-zinc-900 border border-purple-200 dark:border-purple-900/60 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-black uppercase text-purple-600 dark:text-purple-300 font-heading tracking-wider">
+              Nilai Akhir
+            </span>
+            <div
+              class="w-7 h-7 rounded-lg bg-purple-200/60 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+          </div>
+          <div>
+            <div id="resultModalScore"
+              class="text-3xl sm:text-4xl font-black text-[#7C3AED] font-heading tracking-tight leading-none">
+              100
+            </div>
+            <span class="text-[10px] font-bold text-slate-400">Skala 0 - 100</span>
+          </div>
+          <div id="resultModalBadge"
+            class="inline-block px-2.5 py-1 rounded-xl text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-center">
+            Sangat Baik 🏆
+          </div>
         </div>
-        <div>
-          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Jawaban Benar</span>
-          <div id="resultModalCorrect" class="text-xl font-black text-emerald-500 mt-2 font-heading">5 / 5</div>
+
+        <!-- Card 2: Jawaban Benar -->
+        <div
+          class="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-emerald-50/80 to-emerald-100/30 dark:from-emerald-950/40 dark:to-zinc-900 border border-emerald-200 dark:border-emerald-900/60 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-300 font-heading tracking-wider">
+              Benar
+            </span>
+            <div
+              class="w-7 h-7 rounded-lg bg-emerald-200/60 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+          <div>
+            <div id="resultModalCorrect"
+              class="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-heading tracking-tight leading-none">
+              5
+            </div>
+            <div id="resultModalCorrectSub"
+              class="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300 mt-1">
+              5 / 5 Soal
+            </div>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400">Akurasi Jawaban</div>
         </div>
-        <div>
-          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Waktu</span>
-          <div id="resultModalTime" class="text-xl font-black text-amber-500 mt-2 font-heading">02:45</div>
+
+        <!-- Card 3: Jawaban Salah -->
+        <div
+          class="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-rose-50/80 to-rose-100/30 dark:from-rose-950/40 dark:to-zinc-900 border border-rose-200 dark:border-rose-900/60 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase text-rose-600 dark:text-rose-300 font-heading tracking-wider">
+              Salah
+            </span>
+            <div
+              class="w-7 h-7 rounded-lg bg-rose-200/60 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+          </div>
+          <div>
+            <div id="resultModalWrong"
+              class="text-3xl sm:text-4xl font-black text-rose-600 dark:text-rose-400 font-heading tracking-tight leading-none">
+              0
+            </div>
+            <div id="resultModalWrongSub" class="text-[11px] font-extrabold text-rose-700 dark:text-rose-300 mt-1">
+              0 Soal Salah
+            </div>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400">Perlu Pembahasan</div>
+        </div>
+
+        <!-- Card 4: Waktu Pengerjaan -->
+        <div
+          class="p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-amber-50/80 to-amber-100/30 dark:from-amber-950/40 dark:to-zinc-900 border border-amber-200 dark:border-amber-900/60 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-black uppercase text-amber-600 dark:text-amber-300 font-heading tracking-wider">
+              Durasi
+            </span>
+            <div
+              class="w-7 h-7 rounded-lg bg-amber-200/60 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-stopwatch"></i>
+            </div>
+          </div>
+          <div>
+            <div id="resultModalTime"
+              class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 font-heading tracking-tight leading-none">
+              02:45
+            </div>
+            <div id="resultModalTimeSub" class="text-[11px] font-extrabold text-amber-700 dark:text-amber-300 mt-1">
+              Menit:Detik
+            </div>
+          </div>
+          <div class="text-[10px] font-bold text-slate-400">Total Waktu Kuis</div>
         </div>
       </div>
 
+      <!-- Quick Question Result Navigator Bar -->
+      <div
+        class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black text-slate-800 dark:text-slate-200 font-heading flex items-center gap-1.5">
+            <i class="fa-solid fa-table-cells text-[#7C3AED]"></i> Peta Hasil Jawaban Soal:
+          </span>
+          <div class="flex items-center gap-3 text-[11px] font-bold">
+            <span class="flex items-center gap-1 text-emerald-600"><i
+                class="fa-solid fa-square text-emerald-500 text-[10px]"></i> Benar</span>
+            <span class="flex items-center gap-1 text-rose-600"><i
+                class="fa-solid fa-square text-rose-500 text-[10px]"></i> Salah</span>
+          </div>
+        </div>
+        <div id="resultModalQuickMap" class="flex flex-wrap gap-1.5 sm:gap-2 pt-1"></div>
+      </div>
+
+      <!-- Filter Pembahasan Tabs -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-zinc-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-[#7C3AED] text-sm"></i>
+          <h4 class="text-sm font-black text-slate-900 dark:text-white font-heading">
+            Daftar Pembahasan Soal
+          </h4>
+        </div>
+        <div
+          class="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-zinc-800 text-xs font-bold border border-slate-200 dark:border-zinc-700">
+          <button id="btnFilterReviewAll"
+            class="review-filter-btn active px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 bg-white dark:bg-zinc-700 shadow-sm text-slate-900 dark:text-white">
+            <span>Semua Soal</span>
+            <span id="filterCountAll"
+              class="text-[10px] px-1.5 py-0.2 rounded-md bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-extrabold">5</span>
+          </button>
+          <button id="btnFilterReviewWrong"
+            class="review-filter-btn px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <span>Salah Saja</span>
+            <span id="filterCountWrong"
+              class="text-[10px] px-1.5 py-0.2 rounded-md bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-extrabold">0</span>
+          </button>
+          <button id="btnFilterReviewCorrect"
+            class="review-filter-btn px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <span>Benar Saja</span>
+            <span id="filterCountCorrect"
+              class="text-[10px] px-1.5 py-0.2 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-extrabold">5</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Container Review Pembahasan List -->
       <div id="resultModalPembahasanList" class="space-y-4"></div>
 
-      <div class="pt-4 border-t border-slate-200 dark:border-zinc-800">
-        <button id="btnDoneViewingScore" class="w-full btn-flat btn-flat-purple py-3 text-sm font-black">
-          Selesai & Tutup Pembahasan
+      <!-- Action Footer -->
+      <div
+        class="pt-4 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button id="btnRetakeActiveQuiz"
+          class="w-full sm:w-auto btn-flat btn-flat-white text-xs py-3 px-5 flex items-center justify-center gap-2 font-black">
+          <i class="fa-solid fa-rotate-right text-[#7C3AED]"></i>
+          <span>Ulangi Latihan Kuis Ini</span>
         </button>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button id="btnDoneViewingScore"
+            class="flex-1 sm:flex-none btn-flat btn-flat-purple py-3 px-6 text-xs font-black flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Selesai & Ke Menu</span>
+          </button>
+        </div>
       </div>
 
     </div>
