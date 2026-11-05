@@ -1,0 +1,415 @@
+/* styles.css - Clean Bento Grid Modular Design System for MathVerse */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-main: #F4F4F6;
+  --bg-card: #FFFFFF;
+  --bg-card-muted: #EBEBEF;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --border-color: #E5E7EB;
+  
+  /* Solid Flat Accent Colors */
+  --flat-purple: #7C3AED;
+  --flat-purple-dark: #6D28D9;
+  --flat-yellow: #FACC15;
+  --flat-yellow-dark: #EAB308;
+  --flat-mint: #34D399;
+  --flat-mint-dark: #10B981;
+  --flat-blue: #3B82F6;
+  --flat-blue-dark: #2563EB;
+  --flat-coral: #FB7185;
+  --flat-coral-dark: #F43F5E;
+  --flat-cyan: #06B6D4;
+  --flat-cyan-dark: #0891B2;
+  --flat-cream: #FEF08A;
+  --flat-charcoal: #1F2937;
+}
+
+.dark {
+  --bg-main: #121212;
+  --bg-card: #1E1E22;
+  --bg-card-muted: #27272A;
+  --text-main: #FFFFFF;
+  --text-muted: #9CA3AF;
+  --border-color: #2E2E34;
+  
+  --flat-charcoal: #27272A;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ==========================================
+   BENTO MODULAR CARD BASE STYLES
+   ========================================== */
+.bento-card {
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.bento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08);
+}
+
+.dark .bento-card:hover {
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.4);
+}
+
+.bento-card:active {
+  transform: scale(0.99);
+}
+
+/* Solid Flat Accent Card Classes (Strictly NO Gradients) */
+.bg-flat-purple {
+  background-color: var(--flat-purple) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-flat-yellow {
+  background-color: var(--flat-yellow) !important;
+  color: #111827 !important;
+}
+
+.bg-flat-mint {
+  background-color: var(--flat-mint) !important;
+  color: #064E3B !important;
+}
+
+.bg-flat-blue {
+  background-color: var(--flat-blue) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-flat-coral {
+  background-color: var(--flat-coral) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-flat-cyan {
+  background-color: var(--flat-cyan) !important;
+  color: #FFFFFF !important;
+}
+
+.bg-flat-cream {
+  background-color: var(--flat-cream) !important;
+  color: #111827 !important;
+}
+
+.bg-flat-charcoal {
+  background-color: var(--flat-charcoal) !important;
+  color: #FFFFFF !important;
+}
+
+/* Flat Solid Buttons */
+.btn-flat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  user-select: none;
+}
+
+.btn-flat:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.btn-flat:active {
+  transform: scale(0.97);
+}
+
+/* Button Variants */
+.btn-flat-dark {
+  background-color: #111827;
+  color: #FFFFFF;
+}
+.dark .btn-flat-dark {
+  background-color: #FFFFFF;
+  color: #111827;
+}
+
+.btn-flat-white {
+  background-color: #FFFFFF;
+  color: #111827;
+}
+.dark .btn-flat-white {
+  background-color: #27272A;
+  color: #FFFFFF;
+}
+
+.btn-flat-purple {
+  background-color: var(--flat-purple);
+  color: #FFFFFF;
+}
+
+.btn-flat-yellow {
+  background-color: var(--flat-yellow);
+  color: #111827;
+}
+
+.btn-flat-mint {
+  background-color: var(--flat-mint);
+  color: #064E3B;
+}
+
+.btn-flat-blue {
+  background-color: var(--flat-blue);
+  color: #FFFFFF;
+}
+
+/* ==========================================
+   SLIDE & TRANSITION SYSTEM
+   ========================================== */
+.view-section {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.view-section.hidden-slide {
+  display: none !important;
+  opacity: 0;
+}
+
+.view-section.active-slide {
+  display: block !important;
+  opacity: 1;
+  animation: slideFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide Link Active Pill Styling */
+.nav-slide-link {
+  transition: all 0.15s ease;
+  border-radius: 999px;
+}
+
+.nav-slide-link.active-nav {
+  background-color: var(--text-main) !important;
+  color: var(--bg-main) !important;
+  font-weight: 800;
+}
+
+
+/* Filter & Toggle Buttons */
+.jenjang-filter-btn,
+.quiz-jenjang-btn {
+  transition: all 0.15s ease;
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+}
+
+.jenjang-filter-btn.active,
+.quiz-jenjang-btn.active {
+  background-color: var(--flat-purple) !important;
+  color: #FFFFFF !important;
+  border-color: var(--flat-purple) !important;
+  font-weight: 800;
+}
+
+.kelas-filter-btn,
+.quiz-kelas-btn {
+  transition: all 0.15s ease;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+}
+
+.kelas-filter-btn.active,
+.quiz-kelas-btn.active {
+  background-color: var(--flat-blue) !important;
+  color: #FFFFFF !important;
+  border-color: var(--flat-blue) !important;
+  font-weight: 800;
+}
+
+.quiz-diff-btn {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 18px;
+  border: 2px solid var(--border-color);
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.quiz-diff-btn:hover:not(.active) {
+  border-color: #CBD5E1;
+  background-color: var(--bg-card-muted);
+}
+
+.dark .quiz-diff-btn:hover:not(.active) {
+  border-color: #3F3F46;
+}
+
+.quiz-diff-btn .diff-check-icon {
+  display: none;
+}
+
+.quiz-diff-btn.active {
+  background-color: var(--flat-mint) !important;
+  color: #064E3B !important;
+  border-color: var(--flat-mint-dark) !important;
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(52, 211, 153, 0.28);
+}
+
+.quiz-diff-btn.active .diff-check-icon {
+  display: inline-block;
+  color: #064E3B;
+}
+
+.quiz-diff-btn.active .diff-badge-easy {
+  background-color: #064E3B !important;
+  color: #A7F3D0 !important;
+}
+
+.quiz-diff-btn.active .diff-badge-medium {
+  background-color: #78350F !important;
+  color: #FEF3C7 !important;
+}
+
+.quiz-diff-btn.active .diff-badge-hard {
+  background-color: #881337 !important;
+  color: #FFE4E6 !important;
+}
+
+/* Material Catalog Card */
+.materi-card {
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.materi-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--flat-purple);
+  box-shadow: 0 12px 24px -6px rgba(124, 58, 237, 0.15);
+}
+
+/* Quiz Option Card */
+.option-card {
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+  background-color: var(--bg-card);
+  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.option-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--flat-purple);
+}
+
+.option-card.selected {
+  border-color: var(--flat-purple) !important;
+  background-color: rgba(124, 58, 237, 0.08) !important;
+}
+
+.dark .option-card.selected {
+  background-color: rgba(124, 58, 237, 0.25) !important;
+}
+
+/* Math Container */
+.math-container {
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 12px 16px;
+  background-color: var(--bg-card-muted);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+}
+
+.mjx-chtml {
+  outline: none !important;
+  font-size: 105% !important;
+}
+
+/* Minigame Arcade Canvas Frame */
+.game-frame {
+  border-radius: 20px;
+  border: 3px solid var(--border-color);
+  overflow: hidden;
+  background: #0F172A;
+}
+
+#healingGameCanvas {
+  touch-action: none;
+  image-rendering: pixelated;
+}
+
+/* Team Card */
+.team-card {
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Inline Pill Badges for Headline */
+.pill-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 18px;
+  padding: 0.25rem 0.85rem;
+  vertical-align: middle;
+  line-height: 1.2;
+}

@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathVerse - Platform Belajar Matematika Interaktif</title>
+  <meta name="description"
+    content="Aplikasi Belajar Matematika Interaktif SD, SMP, & SMA/SMK dengan tata letak Bento Grid modular, rangkuman materi, kuis berkonfigurasi, dan mini game healing.">
+
+  <!-- Google Fonts: Outfit (Bold & Heavy Heading) + Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          borderRadius: {
+            'bento': '20px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Styles CSS -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- MathJax CDN v3 for LaTeX math rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+  <!-- Firebase Web SDK v10 Compat CDN Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#7C3AED] selection:text-white relative">
+
+  <!-- ================= NAVBAR ================= -->
+  <header
+    class="sticky top-0 z-40 bg-white/90 dark:bg-[#181818]/90 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- Brand Logo Button -->
+      <button id="brandLogoBtn" class="flex items-center gap-3 p-1 rounded-2xl group hover:opacity-90 transition">
+        <div
+          class="w-10 h-10 rounded-[14px] bg-[#7C3AED] text-white flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-shapes"></i>
+        </div>
+        <div class="flex flex-col text-left">
+          <span class="font-black text-2xl tracking-tight font-heading text-slate-900 dark:text-white">Math<span
+              class="text-[#7C3AED]">Verse</span></span>
+          <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider -mt-1">SD • SMP
+            • SMA</span>
+        </div>
+      </button>
+
+      <!-- Navigation Tabs (Desktop) -->
+      <nav
+        class="hidden md:flex items-center gap-1.5 p-1.5 rounded-full bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-xs font-bold text-slate-600 dark:text-slate-300">
+        <button data-target-slide="slideHome"
+          class="nav-slide-link active-nav px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-house mr-1.5"></i>Beranda
+        </button>
+        <button data-target-slide="slideMateri"
+          class="nav-slide-link px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-book-open mr-1.5"></i>Materi
+        </button>
+        <button data-target-slide="slideLatihan"
+          class="nav-slide-link px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-pen-to-square mr-1.5"></i>Latihan
+        </button>
+        <button data-target-slide="slideRiwayat"
+          class="nav-slide-link px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-clock-rotate-left mr-1.5"></i>Riwayat
+        </button>
+        <button data-target-slide="slideMinigame"
+          class="nav-slide-link px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-gamepad mr-1.5"></i>Mini Game
+        </button>
+        <button data-target-slide="slideAbout"
+          class="nav-slide-link px-4 py-2 hover:text-slate-900 dark:hover:text-white">
+          <i class="fa-solid fa-users mr-1.5"></i>About Us
+        </button>
+      </nav>
+
+      <!-- Right Actions: Dark Mode + Auth -->
+      <div class="flex items-center gap-3">
+        <!-- Dark Mode Toggle Button -->
+        <button id="darkModeToggle" aria-label="Toggle Dark Mode"
+          class="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-zinc-700 flex items-center justify-center transition">
+          <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+        </button>
+
+        <!-- Guest View -->
+        <div id="loggedOutView" class="flex items-center">
+          <button id="btnOpenAuth"
+            class="btn-flat btn-flat-purple text-xs font-bold px-4 py-2.5 flex items-center gap-2">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Masuk / Daftar</span>
+          </button>
+        </div>
+
+        <!-- Logged In View -->
+        <div id="loggedInView" class="hidden flex items-center gap-2">
+          <div
+            class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs font-extrabold">
+            <div class="w-6 h-6 rounded-full bg-[#7C3AED] text-white flex items-center justify-center text-[10px]">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <span id="userDisplayName" class="max-w-[100px] truncate text-slate-900 dark:text-white">Siswa</span>
+          </div>
+          <button id="btnLogout" aria-label="Keluar"
+            class="w-9 h-9 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 flex items-center justify-center transition text-xs font-bold">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <!-- Mobile Menu Trigger -->
+        <button id="btnMobileMenu" aria-label="Buka Menu Navigasi"
+          class="md:hidden w-10 h-10 rounded-2xl bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-zinc-700 flex items-center justify-center">
+          <i class="fa-solid fa-bars text-base"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black/60 z-50 hidden opacity-0 transition-opacity duration-200">
+    <div id="mobileDrawer"
+      class="fixed right-0 top-0 bottom-0 w-4/5 max-w-xs bg-white dark:bg-[#181818] p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-200 ease-in-out border-l border-slate-200 dark:border-zinc-800">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800 mb-6">
+          <span class="font-black text-lg font-heading text-slate-900 dark:text-white">Menu Navigasi</span>
+          <button id="btnCloseMobileMenu"
+            class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-500">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="flex flex-col gap-2 font-bold text-sm">
+          <button data-target-slide="slideHome"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-house text-[#7C3AED]"></i>Beranda
+          </button>
+          <button data-target-slide="slideMateri"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-book-open text-[#34D399]"></i>Rangkuman Materi
+          </button>
+          <button data-target-slide="slideLatihan"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-pen-to-square text-[#3B82F6]"></i>Latihan Soal
+          </button>
+          <button data-target-slide="slideRiwayat"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-clock-rotate-left text-[#06B6D4]"></i>Riwayat
+          </button>
+          <button data-target-slide="slideMinigame"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-gamepad text-[#FACC15]"></i>Mini Game Healing
+          </button>
+          <button data-target-slide="slideAbout"
+            class="nav-slide-link mobile-nav-link p-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-zinc-800 text-left flex items-center gap-3">
+            <i class="fa-solid fa-users text-[#FB7185]"></i>About Us
+          </button>
+        </div>
+      </div>
+      <div class="pt-4 border-t border-slate-200 dark:border-zinc-800 text-xs text-center text-slate-400 font-bold">
+        MathVerse Indonesia &copy; 2026
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= MAIN CONTENT VIEWS ================= -->
+  <main class="flex-grow relative z-10 py-6">
+
+    <!-- ================= SLIDE 1: HOME (BENTO GRID HERO) ================= -->
+    <section id="slideHome" class="view-section active-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+
+      <!-- Hero Section: 2 Kolom Responsif -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-4 sm:py-6">
+        <!-- Kolom Kiri: Teks Sapaan & CTA -->
+        <div class="lg:col-span-7 space-y-5 text-left">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-flat-purple text-white text-xs font-bold uppercase tracking-wider w-fit">
+            <i class="fa-solid fa-sparkles"></i>
+            <span>Platform Belajar Matematika Interaktif</span>
+          </div>
+
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight font-heading text-slate-900 dark:text-white break-words">
+            Belajar
+            <span class="pill-inline bg-flat-purple text-white font-extrabold"><i
+                class="fa-solid fa-square-root-variable text-xl"></i> MTK</span>
+            Lebih
+            <span class="pill-inline bg-flat-mint text-slate-950 font-extrabold"><i class="fa-solid fa-bolt text-xl"></i>
+              Seru</span>
+            &
+            <span class="pill-inline bg-flat-yellow text-slate-950 font-extrabold"><i
+                class="fa-solid fa-star text-xl"></i> Interaktif</span>
+          </h1>
+
+          <p id="heroUserGreeting"
+            class="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl break-words">
+            Jelajahi rangkuman materi lengkap SD, SMP, SMA/SMK, kerjakan kuis berkonfigurasi tingkat kesulitan, dan
+            nikmati game platformer healing interaktif.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button data-target-slide="slideMateri"
+              class="nav-slide-link btn-flat btn-flat-purple py-3 px-6 text-sm font-bold flex items-center gap-2">
+              <span>Mulai Belajar</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <button data-target-slide="slideLatihan"
+              class="nav-slide-link btn-flat btn-flat-white py-3 px-6 text-sm font-bold flex items-center gap-2">
+              <span>Latihan Soal</span>
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Ilustrasi Flat Minimalis -->
+        <div class="lg:col-span-5 flex items-center justify-center">
+          <div
+            class="w-full max-w-md p-6 rounded-3xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/80 shadow-sm relative overflow-hidden space-y-3.5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-700">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-slate-400">mathverse.canvas</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <div class="p-3.5 rounded-2xl bg-flat-cream text-slate-900 space-y-1">
+                <div class="text-xl font-black font-heading">\(\sqrt{a^2 + b^2}\)</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-700">Pythagoras</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-flat-mint text-emerald-950 space-y-1">
+                <div class="text-xl font-black font-heading">\(\int f(x) dx\)</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-900">Kalkulus</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-flat-blue text-white space-y-1">
+                <div class="text-xl font-black font-heading">\(\sin^2 \theta + \cos^2 \theta\)</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-blue-100">Trigonometri</div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-flat-purple text-white space-y-1">
+                <div class="text-xl font-black font-heading">\(\lim_{x \to 0} \frac{\sin x}{x}\)</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-purple-200">Limit Fungsi</div>
+              </div>
+            </div>
+
+            <div
+              class="p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div
+                  class="w-7 h-7 rounded-xl bg-flat-yellow text-slate-950 flex items-center justify-center font-black text-xs">
+                  <i class="fa-solid fa-shapes"></i>
+                </div>
+                <div class="text-left">
+                  <div class="text-xs font-black text-slate-900 dark:text-white font-heading">Modular Learning</div>
+                  <div class="text-[10px] text-slate-400 font-bold">12 Jenjang • 36+ Topik</div>
+                </div>
+              </div>
+              <span class="text-xs font-mono font-bold text-[#7C3AED]">100% Free</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kartu Fitur Utama: Grid Konsisten (grid-cols-1 md:grid-cols-2 lg:grid-cols-3) Seragam / Stretch -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+
+        <!-- Kartu 1: Rangkuman Materi (Solid Cream/Yellow) -->
+        <div class="bento-card bg-flat-cream p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span
+                class="px-3 py-1 rounded-xl bg-slate-900 text-white font-black text-[11px] uppercase tracking-wider">
+                KATALOG MATERI
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/70 flex items-center justify-center text-slate-900 text-lg">
+                <i class="fa-solid fa-book-open"></i>
+              </div>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900 font-heading">
+              Rangkuman Materi SD - SMA
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed break-words">
+              Dilengkapi 12 jenjang kelas, formula LaTeX MathJax presisi, sifat-sifat teorema, visualisasi diagram, dan
+              contoh soal interaktif.
+            </p>
+          </div>
+
+          <div class="pt-4 flex items-center justify-between border-t border-slate-900/10">
+            <span class="text-xs font-bold text-slate-800">12 Kelas • 36+ Topik</span>
+            <button data-target-slide="slideMateri"
+              class="nav-slide-link btn-flat btn-flat-dark text-xs py-2.5 px-4 flex items-center gap-2">
+              <span>Buka Materi</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu 2: Latihan Soal & Retake Limit (Solid Mint Green) -->
+        <div class="bento-card bg-flat-mint p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span
+                class="px-3 py-1 rounded-xl bg-emerald-950 text-emerald-200 font-black text-[10px] uppercase tracking-wider">
+                KUIS & EVALUASI
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/40 text-emerald-950 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </div>
+            </div>
+            <h3 class="text-2xl font-black text-emerald-950 font-heading">
+              Latihan Soal & Retake Limit
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-900 font-medium leading-relaxed break-words">
+              Pilih tingkat kesulitan Easy, Medium, dan Hard. Dilengkapi timer realtime dan evaluasi kunci pembahasan.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-emerald-950/10">
+            <button data-target-slide="slideLatihan"
+              class="nav-slide-link btn-flat btn-flat-dark text-xs py-2.5 px-4 w-full flex items-center justify-center gap-2">
+              <span>Mulai Latihan</span>
+              <i class="fa-solid fa-play"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu 3: Mini Game Healing (Solid Blue) -->
+        <div class="bento-card bg-flat-blue p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-xl bg-white/20 text-white font-black text-[10px] uppercase tracking-wider">
+                HEALING ZONE
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-lg">
+                <i class="fa-solid fa-gamepad"></i>
+              </div>
+            </div>
+            <h3 class="text-2xl font-black text-white font-heading">
+              Mini Game Platformer 2D
+            </h3>
+            <p class="text-xs sm:text-sm text-blue-100 font-medium leading-relaxed break-words">
+              Istirahat sejenak dari rumus! Lompat di atas platform, hindari rintangan, dan kumpulkan skor koin.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-white/10">
+            <button data-target-slide="slideMinigame"
+              class="nav-slide-link btn-flat btn-flat-white text-xs py-2.5 px-4 w-full flex items-center justify-center gap-2">
+              <span>Main Game</span>
+              <i class="fa-solid fa-gamepad"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu 4: Cloud History (Solid Coral/Pink) -->
+        <div class="bento-card bg-flat-coral p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-xl bg-white/20 text-white font-black text-[10px] uppercase tracking-wider">
+                FIRESTORE SYNC
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-lg">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+            </div>
+            <h3 class="text-2xl font-black text-white font-heading">
+              Riwayat & Catatan Nilai
+            </h3>
+            <p class="text-xs sm:text-sm text-rose-100 font-medium leading-relaxed break-words">
+              Setiap pengerjaan kuis otomatis tersimpan di Cloud Firestore untuk ditinjau kapan saja.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-white/10">
+            <button data-target-slide="slideRiwayat"
+              class="nav-slide-link btn-flat btn-flat-white text-xs py-2.5 px-4 w-full flex items-center justify-center gap-2">
+              <span>Lihat Riwayat</span>
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu 5: Siswa & Tim Pengembang (Solid Purple) -->
+        <div class="bento-card bg-flat-purple p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-xl bg-white/20 text-white font-black text-[11px] uppercase tracking-wider">
+                KOMUNITAS & TIM
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-lg">
+                <i class="fa-solid fa-users"></i>
+              </div>
+            </div>
+
+            <!-- Avatar Stack using uploaded team photo assets -->
+            <div class="flex items-center gap-3">
+              <div class="flex -space-x-3">
+                <img src="assets/anjas.jpeg" alt="Anjaska"
+                  class="w-11 h-11 rounded-full object-cover border-2 border-white" />
+                <img src="assets/adith.jpeg" alt="Adithia"
+                  class="w-11 h-11 rounded-full object-cover border-2 border-white" />
+                <img src="assets/alex.jpeg" alt="Alexius"
+                  class="w-11 h-11 rounded-full object-cover border-2 border-white" />
+              </div>
+              <div>
+                <div class="text-2xl font-black font-heading text-white">100K+ Siswa</div>
+                <div class="text-[11px] font-bold text-purple-200">Pengguna Terlatih</div>
+              </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-purple-100 font-medium leading-relaxed break-words">
+              Dikembangkan kolaboratif oleh Anjaska, Adithia, dan Alexius untuk belajar matematika lebih menyenangkan.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-white/10">
+            <button data-target-slide="slideAbout"
+              class="nav-slide-link btn-flat btn-flat-white text-xs py-2.5 px-4 w-full flex items-center justify-center gap-2">
+              <span>Profil Pengembang</span>
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu 6: Topik Populer (Solid Dark Charcoal) -->
+        <div class="bento-card bg-flat-charcoal p-7 flex flex-col justify-between h-full space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 font-black text-[10px] uppercase tracking-wider">
+                TOPIK POPULER
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/10 text-white flex items-center justify-center text-lg">
+                <i class="fa-solid fa-calculator"></i>
+              </div>
+            </div>
+            <h3 class="text-2xl font-black text-white font-heading">
+              Topik Matematika Utama
+            </h3>
+            <p class="text-xs sm:text-sm text-zinc-300 font-medium leading-relaxed break-words">
+              Pilihan topik materi matematika terpopuler untuk langsung dipelajari secara cepat.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button data-target-slide="slideMateri"
+                class="nav-slide-link px-2.5 py-1 rounded-lg bg-flat-purple text-white text-[11px] font-bold hover:scale-105 transition-transform">
+                Aljabar
+              </button>
+              <button data-target-slide="slideMateri"
+                class="nav-slide-link px-2.5 py-1 rounded-lg bg-flat-yellow text-slate-900 text-[11px] font-bold hover:scale-105 transition-transform">
+                Trigonometri
+              </button>
+              <button data-target-slide="slideMateri"
+                class="nav-slide-link px-2.5 py-1 rounded-lg bg-flat-mint text-emerald-950 text-[11px] font-bold hover:scale-105 transition-transform">
+                Kalkulus
+              </button>
+              <button data-target-slide="slideMateri"
+                class="nav-slide-link px-2.5 py-1 rounded-lg bg-flat-blue text-white text-[11px] font-bold hover:scale-105 transition-transform">
+                Geometri
+              </button>
+              <button data-target-slide="slideMateri"
+                class="nav-slide-link px-2.5 py-1 rounded-lg bg-flat-coral text-white text-[11px] font-bold hover:scale-105 transition-transform">
+                Statistika
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-700/60">
+            <button data-target-slide="slideMateri"
+              class="nav-slide-link btn-flat btn-flat-white text-xs py-2.5 px-4 w-full flex items-center justify-center gap-2">
+              <span>Jelajahi Semua Topik</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SLIDE 2: RANGKUMAN MATERI ================= -->
+    <section id="slideMateri" class="view-section hidden-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+      <!-- Catalog View -->
+      <div id="materiCatalogView" class="space-y-8">
+
+        <div class="text-center max-w-3xl mx-auto space-y-2">
+          <span
+            class="px-3.5 py-1.5 rounded-full bg-flat-purple text-white text-xs font-black uppercase tracking-wider">
+            KATALOG MATERI INTERAKTIF
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-heading">
+            Eksplorasi Topik Matematika
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+            Pilih Jenjang dan Kelas untuk mengakses seluruh rangkuman materi lengkap.
+          </p>
+        </div>
+
+        <!-- Segmented Controls Toolbar: Jenjang & Kelas -->
+        <div class="bento-card p-5 sm:p-6 space-y-4">
+          <!-- Segment 1: Jenjang Selector -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span class="text-xs font-black uppercase text-slate-500 font-heading shrink-0">1. Jenjang:</span>
+              <div class="inline-flex p-1 rounded-2xl bg-slate-100 dark:bg-zinc-800/90 border border-slate-200 dark:border-zinc-700">
+                <button id="btnFilterSD"
+                  class="jenjang-filter-btn active px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-child text-sm"></i>
+                  <span>SD (1 - 6)</span>
+                </button>
+                <button id="btnFilterSMP"
+                  class="jenjang-filter-btn px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-graduate text-sm"></i>
+                  <span>SMP (7 - 9)</span>
+                </button>
+                <button id="btnFilterSMA"
+                  class="jenjang-filter-btn px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-building-columns text-sm"></i>
+                  <span>SMA/SMK (10 - 12)</span>
+                </button>
+              </div>
+            </div>
+
+            <span id="selectedJenjangBadge" class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-purple text-white text-xs font-bold shrink-0">
+              SD (Kelas 1 - 6)
+            </span>
+          </div>
+
+          <!-- Segment 2: Kelas Selector -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+              <span class="text-xs font-black uppercase text-slate-500 font-heading shrink-0">2. Kelas:</span>
+              <div id="kelasButtonsContainer" class="flex flex-wrap items-center gap-2">
+                <!-- Populated dynamically by script.js -->
+              </div>
+            </div>
+
+            <span id="selectedKelasBadge" class="hidden sm:inline-block px-3 py-1 rounded-xl bg-flat-blue text-white text-xs font-bold shrink-0">
+              Kelas 1 SD
+            </span>
+          </div>
+        </div>
+
+        <!-- Topic Grid -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 id="catalogGridTitle"
+              class="font-black text-xl text-slate-900 dark:text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-border-all text-[#7C3AED]"></i>
+              <span>Daftar Topik Materi - Kelas 1 SD</span>
+            </h3>
+            <span id="materiCountBadge"
+              class="text-xs font-bold px-3 py-1 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-slate-300">
+              4 Topik Tersedia
+            </span>
+          </div>
+
+          <div id="materiCatalogGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Populated dynamically by script.js -->
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Dedicated Material Detail Container -->
+      <div id="materiDetailContainer" class="hidden space-y-6">
+
+        <div class="flex items-center justify-between bento-card p-4">
+          <button id="btnBackToCatalogTop" class="btn-flat btn-flat-purple text-xs py-2 px-4 flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Kembali ke Daftar Materi</span>
+          </button>
+          <span id="detailBreadcrumb" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+            SMA / Kelas 12 / Limit Fungsi
+          </span>
+        </div>
+
+        <div class="bento-card p-6 sm:p-9 space-y-8">
+          <div class="border-b border-slate-200 dark:border-zinc-800 pb-5 space-y-2">
+            <div class="flex items-center gap-2">
+              <span id="detailBadgeJenjang" class="px-3 py-1 rounded-full bg-flat-purple text-white text-xs font-bold">
+                SMA Kelas 12
+              </span>
+              <span id="detailBadgeFase" class="px-3 py-1 rounded-full bg-flat-mint text-emerald-950 text-xs font-bold">
+                Fase F+
+              </span>
+            </div>
+            <h2 id="detailTopicTitle"
+              class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-heading">
+              Limit Fungsi Aljabar & Trigonometri
+            </h2>
+            <p id="detailTopicDescription"
+              class="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+              Penjelasan rinci konsep limit fungsi, sifat-sifat teorema limit, metode pembagian turunan, dan
+              penerapannya.
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-brain text-[#7C3AED]"></i> 1. Pengertian & Konsep Dasar
+            </h3>
+            <div id="detailConceptBody" class="math-container text-sm space-y-2"></div>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-[#FACC15]"></i> 2. Sifat-Sifat & Teorema Utama
+            </h3>
+            <div id="detailPropertiesBody" class="grid sm:grid-cols-2 gap-4 text-xs sm:text-sm math-container"></div>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-[#34D399]"></i> 3. Visualisasi Diagram & Grafik
+            </h3>
+            <div
+              class="p-6 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex flex-col items-center justify-center">
+              <div id="detailVisualSvg" class="w-full max-w-md"></div>
+              <span id="detailVisualCaption" class="text-xs text-slate-500 font-bold mt-3 text-center">
+                Diagram Visualisasi Konsep
+              </span>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-4 border-t border-slate-200 dark:border-zinc-800">
+            <h3 class="text-lg font-black text-slate-900 dark:text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-[#3B82F6]"></i> 4. Contoh Soal Interaktif & Pembahasan
+            </h3>
+            <div id="detailExampleProblemsContainer" class="space-y-4"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between bento-card p-4">
+          <button id="btnBackToCatalogBottom"
+            class="btn-flat btn-flat-purple text-xs py-2 px-4 flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Kembali ke Daftar Materi</span>
+          </button>
+          <span class="text-xs font-bold text-slate-400">MathVerse Indonesia</span>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SLIDE 3: LATIHAN SOAL ================= -->
+    <section id="slideLatihan" class="view-section hidden-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+      <!-- Configuration Card -->
+      <div id="latihanConfigCard" class="bento-card max-w-3xl mx-auto p-6 sm:p-8 space-y-6">
+
+        <div class="text-center space-y-1 pb-2 border-b border-slate-200 dark:border-zinc-800">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-heading">
+            Aturan & Tingkat Kesulitan Latihan
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+            Pilih Jenjang, Kelas, dan Tingkat Kesulitan untuk memulai latihan soal.
+          </p>
+        </div>
+
+        <!-- Segmented Controls: Jenjang & Kelas -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700/80 space-y-3.5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading">
+              1. Pilih Jenjang:
+            </label>
+            <div class="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700">
+              <button id="btnQuizJenjangSD" class="quiz-jenjang-btn active px-4 py-1.5 text-xs font-bold rounded-lg transition">
+                SD
+              </button>
+              <button id="btnQuizJenjangSMP" class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition">
+                SMP
+              </button>
+              <button id="btnQuizJenjangSMA" class="quiz-jenjang-btn px-4 py-1.5 text-xs font-bold rounded-lg transition">
+                SMA/SMK
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 border-t border-slate-200 dark:border-zinc-700/60 pt-3">
+            <label class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading shrink-0">
+              2. Pilih Kelas:
+            </label>
+            <div id="quizKelasOptionsContainer" class="flex flex-wrap gap-1.5 items-center"></div>
+          </div>
+        </div>
+
+        <!-- Step 3: Difficulty -->
+        <div class="space-y-2.5">
+          <label
+            class="block text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 font-heading">
+            3. Pilih Tingkat Kesulitan:
+          </label>
+          <div class="grid sm:grid-cols-3 gap-3">
+            <button id="btnDiffEasy"
+              class="quiz-diff-btn p-4 text-left space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="diff-badge-easy px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[10px]">EASY</span>
+                <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
+              </div>
+              <div class="font-black text-sm font-heading">5 Soal PG</div>
+              <div class="text-[11px] font-bold">1 Benar = 20 Poin</div>
+            </button>
+
+            <button id="btnDiffMedium"
+              class="quiz-diff-btn p-4 text-left space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="diff-badge-medium px-2.5 py-0.5 rounded-md bg-amber-500 text-white font-black text-[10px]">MEDIUM</span>
+                <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
+              </div>
+              <div class="font-black text-sm font-heading">10 Soal PG</div>
+              <div class="text-[11px] font-bold">1 Benar = 10 Poin</div>
+            </button>
+
+            <button id="btnDiffHard"
+              class="quiz-diff-btn p-4 text-left space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="diff-badge-hard px-2.5 py-0.5 rounded-md bg-rose-500 text-white font-black text-[10px]">HARD</span>
+                <i class="diff-check-icon fa-solid fa-circle-check text-base"></i>
+              </div>
+              <div class="font-black text-sm font-heading">25 Soal PG</div>
+              <div class="text-[11px] font-bold">1 Benar = 4 Poin</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Attempt Box -->
+        <div id="retakeAttemptStatusBox"
+          class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <i class="fa-solid fa-clock-rotate-left text-[#7C3AED] text-xl"></i>
+            <div>
+              <strong class="block text-xs font-black text-slate-900 dark:text-white font-heading">Status Percobaan
+                (Retake Limit):</strong>
+              <span id="retakeAttemptText" class="text-xs font-bold text-slate-500 dark:text-slate-400">Pengerjaan Ke-1
+                dari Maksimal 3 Kali</span>
+            </div>
+          </div>
+          <span id="retakeCountBadge" class="px-3 py-1 rounded-xl bg-flat-purple text-white text-xs font-bold">
+            Sisa 3x
+          </span>
+        </div>
+
+        <button id="btnStartConfiguredQuiz"
+          class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black flex items-center justify-center gap-2">
+          <i class="fa-solid fa-play"></i> Mulai Kerjakan Latihan
+        </button>
+
+      </div>
+
+
+      <!-- Active Quiz View -->
+      <div id="quizActiveContent" class="hidden space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span id="quizActiveSubtitle" class="text-[#7C3AED] font-black text-xs uppercase tracking-wider">Modul
+              Latihan Soal</span>
+            <h2 id="quizActiveTitle" class="text-2xl font-black text-slate-900 dark:text-white mt-0.5 font-heading">
+              SMA Kelas 12 - Easy (5 Soal)
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-3 bento-card px-4 py-2">
+            <i class="fa-solid fa-clock text-amber-500 text-lg"></i>
+            <div>
+              <div class="text-[10px] uppercase font-black text-slate-400">Waktu</div>
+              <div id="quizTimer" class="font-mono text-sm font-black text-slate-900 dark:text-white">00:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-8 space-y-4">
+            <div class="bento-card p-6 sm:p-8 space-y-6">
+              <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+                <div class="flex items-center gap-2">
+                  <span id="questionNumBadge" class="px-3 py-1 rounded-xl bg-flat-purple text-white font-black text-xs">
+                    Soal 1 dari 5
+                  </span>
+                  <span id="questionCategoryBadge"
+                    class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 text-xs font-bold">
+                    Topik Matematika
+                  </span>
+                </div>
+                <button id="btnHint"
+                  class="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold flex items-center gap-1.5">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  <span>Petunjuk</span>
+                </button>
+              </div>
+
+              <div id="questionText"
+                class="text-base font-semibold text-slate-900 dark:text-slate-100 leading-relaxed math-container">
+                Loading Soal...
+              </div>
+
+              <div id="optionsContainer" class="space-y-3"></div>
+
+              <div
+                class="pt-6 border-t border-slate-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+                <label
+                  class="inline-flex items-center gap-2 cursor-pointer px-3 py-2 rounded-xl bg-slate-100 dark:bg-zinc-800 select-none">
+                  <input type="checkbox" id="checkRagu" class="w-4 h-4 text-amber-500 rounded border-slate-300">
+                  <span class="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                    <i class="fa-solid fa-flag"></i> Ragu-Ragu
+                  </span>
+                </label>
+
+                <div class="flex items-center gap-2">
+                  <button id="btnPrevQuestion" class="btn-flat btn-flat-white text-xs py-2.5 px-4 disabled:opacity-40">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Sebelum
+                  </button>
+                  <button id="btnNextQuestion"
+                    class="btn-flat btn-flat-purple text-xs py-2.5 px-4 flex items-center gap-1.5">
+                    Lanjut <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4">
+            <div class="bento-card p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
+                <h3 class="font-black text-sm text-slate-900 dark:text-white font-heading flex items-center gap-2">
+                  <i class="fa-solid fa-border-all text-[#7C3AED]"></i> Navigasi Nomor
+                </h3>
+                <span id="answeredCountBadge" class="text-xs font-bold text-[#7C3AED]">0/5 Dijawab</span>
+              </div>
+
+              <div id="paletteGrid" class="grid grid-cols-5 gap-2 max-h-64 overflow-y-auto p-1"></div>
+
+              <button id="btnSubmitQuiz"
+                class="w-full btn-flat btn-flat-mint py-3 text-xs font-black flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i> Submit Latihan Soal
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SLIDE 4: RIWAYAT LATSOAL ================= -->
+    <section id="slideRiwayat" class="view-section hidden-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+      <div class="text-center max-w-3xl mx-auto space-y-2">
+        <span class="px-3.5 py-1.5 rounded-full bg-flat-cyan text-white text-xs font-black uppercase tracking-wider">
+          DATABASE FIRESTORE SYNC
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-heading">
+          Riwayat Latihan Soal
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+          Daftar seluruh pengerjaan latihan soal yang tersimpan di Firebase Cloud Firestore.
+        </p>
+      </div>
+
+      <div class="bento-card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-flat-cyan text-white flex items-center justify-center font-black">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <div>
+            <span class="font-black text-xs text-slate-900 dark:text-white block font-heading">Status Connection:</span>
+            <span id="riwayatSyncStatusText" class="text-xs text-slate-500 dark:text-slate-400 font-medium">Terhubung ke
+              Firestore • Data Realtime</span>
+          </div>
+        </div>
+
+        <button id="btnRefreshHistory" class="btn-flat btn-flat-white text-xs py-2 px-3 flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate"></i>
+          <span>Muat Ulang</span>
+        </button>
+      </div>
+
+      <div class="w-full overflow-x-auto pb-2">
+        <div id="riwayatListContainer" class="space-y-3 min-w-full"></div>
+      </div>
+
+    </section>
+
+
+    <!-- ================= SLIDE 5: MINI GAME 2D PLATFORMER ================= -->
+    <section id="slideMinigame" class="view-section hidden-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+      <div class="text-center max-w-3xl mx-auto space-y-2">
+        <span
+          class="px-3.5 py-1.5 rounded-full bg-flat-yellow text-slate-950 text-xs font-black uppercase tracking-wider">
+          HEALING ZONE
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-heading">
+          Mini Game Platformer 2D
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+          Istirahat sejenak! Kontrol karakter hero melompat di atas platform dan kumpulkan koin.
+        </p>
+      </div>
+
+      <!-- Flat Minimalist Console Wrapper (Dark Wood Housing) -->
+      <div
+        class="max-w-4xl mx-auto rounded-[28px] p-4 sm:p-7 bg-[#231A14] dark:bg-[#18110D] border-4 border-[#3A2D23] dark:border-[#2B2018] shadow-2xl space-y-4">
+        <div
+          class="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A2D23] dark:border-[#2B2018] pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black text-amber-200/70 uppercase font-heading">Level:</span>
+            <div class="flex gap-1.5">
+              <button id="btnGameLevel1"
+                class="game-level-btn active px-3 py-1.5 rounded-xl bg-flat-purple text-white font-bold text-xs">
+                Level 1: Meadow
+              </button>
+              <button id="btnGameLevel2"
+                class="game-level-btn px-3 py-1.5 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs">
+                Level 2: Forest
+              </button>
+              <button id="btnGameLevel3"
+                class="game-level-btn px-3 py-1.5 rounded-xl bg-stone-800 text-stone-300 font-bold text-xs">
+                Level 3: Cosmic
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 text-xs font-bold">
+            <div
+              class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-coins"></i>
+              <span>Koin: <span id="gameCoinCount">0</span></span>
+            </div>
+            <div
+              class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-trophy"></i>
+              <span>Skor: <span id="gameScoreCount">0</span></span>
+            </div>
+            <button id="btnRestartPlatformer" class="btn-flat btn-flat-white text-xs py-1.5 px-3">
+              <i class="fa-solid fa-rotate-right"></i> Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Flat Minimalist Console Screen Container with Aspect Video (16:9) -->
+        <div class="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden border-2 border-[#150F0B] shadow-inner flex items-center justify-center">
+          <canvas id="healingGameCanvas" width="800" height="400"
+            class="w-full h-full object-contain block bg-slate-950 cursor-pointer">
+            Browser tidak mendukung Canvas 2D HTML5.
+          </canvas>
+
+          <div id="gameStartOverlay"
+            class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-4">
+            <div
+              class="w-16 h-16 rounded-2xl bg-flat-yellow text-slate-950 flex items-center justify-center text-3xl font-black">
+              <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div>
+              <h3 id="overlayLevelTitle" class="text-2xl font-black text-white font-heading">Level 1: Meadow</h3>
+              <p class="text-xs text-slate-300 mt-1 font-medium">Gunakan Panah Kiri/Kanan untuk lari dan Panah
+                Atas/Space untuk melompat.</p>
+            </div>
+            <button id="btnStartPlatformerPlay"
+              class="btn-flat btn-flat-yellow text-xs font-black py-3 px-8 flex items-center gap-2">
+              <i class="fa-solid fa-play"></i> MULAI MAIN
+            </button>
+          </div>
+        </div>
+
+        <!-- Sejajar Arcade Control Buttons -->
+        <div class="pt-2 flex items-center justify-between max-w-md mx-auto select-none">
+          <div class="flex gap-2.5">
+            <button id="btnTouchLeft"
+              class="w-14 h-14 rounded-2xl bg-[#3A2D23] hover:bg-[#4D3D30] active:scale-95 text-amber-200 font-black text-xl flex items-center justify-center transition shadow">
+              ◄
+            </button>
+            <button id="btnTouchRight"
+              class="w-14 h-14 rounded-2xl bg-[#3A2D23] hover:bg-[#4D3D30] active:scale-95 text-amber-200 font-black text-xl flex items-center justify-center transition shadow">
+              ►
+            </button>
+          </div>
+          <button id="btnTouchJump" class="btn-flat btn-flat-yellow px-7 h-14 text-xs font-black shadow-lg">
+            LOMPAT ⬆
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ================= SLIDE 6: ABOUT US ================= -->
+    <section id="slideAbout" class="view-section hidden-slide max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-zinc-800 pb-5">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-flat-purple text-white text-xs font-black uppercase tracking-wider">
+            TIM PENGEMBANG
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mt-1.5 font-heading">
+            Tentang Kami (About Us)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+            Kenali tim dibalik pembuatan platform belajar matematika MathVerse.
+          </p>
+        </div>
+
+        <button data-target-slide="slideHome"
+          class="nav-slide-link btn-flat btn-flat-purple text-xs py-2 px-4 flex items-center gap-2 flex-shrink-0">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Beranda</span>
+        </button>
+      </div>
+
+      <!-- Bento Grid Asymmetric Layout: Visi & Misi + Profil Anggota -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+
+        <!-- Bento 1: Misi & Visi MathVerse (7 Cols on desktop) -->
+        <div
+          class="md:col-span-12 lg:col-span-7 bento-card p-7 sm:p-8 bg-flat-cream flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span
+                class="px-3 py-1 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-wider">
+                VISI & MISI
+              </span>
+              <div class="w-10 h-10 rounded-2xl bg-white/70 text-slate-900 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-rocket"></i>
+              </div>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black text-slate-900 font-heading">
+              Misi & Visi MathVerse
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium break-words">
+              MathVerse dirancang untuk menghadirkan pengalaman belajar matematika yang menyenangkan, komprehensif, dan
+              visual bagi siswa SD, SMP, hingga SMA/SMK. Dilengkapi modul rangkuman materi interaktif, latihan soal
+              berkonfigurasi dengan pembatasan retake, serta mini game platformer 2D untuk penyegaran.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-900/10 flex flex-wrap gap-2">
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">12 Jenjang Kelas</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">LaTeX Formula MathJax</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Cloud Firestore Sync</span>
+            <span class="px-2.5 py-1 rounded-lg bg-white/80 text-slate-900 text-[11px] font-bold">Mini Game Healing</span>
+          </div>
+        </div>
+
+        <!-- Bento 2: Member 1 - Anjaska (Lead Dev, 5 Cols on desktop) -->
+        <div class="md:col-span-12 lg:col-span-5 team-card bento-card p-7 flex flex-col justify-between space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
+              <img src="assets/anjas.jpeg" alt="Avatar Anjaska Fairuz Athallah"
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-[#7C3AED] shadow-md" />
+              <span
+                class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#7C3AED] text-white flex items-center justify-center text-xs font-black">1</span>
+            </div>
+            <div class="space-y-1">
+              <span
+                class="inline-block px-2.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 text-[10px] font-black uppercase">
+                Fullstack & Lead Dev
+              </span>
+              <h4 class="text-lg font-black text-slate-900 dark:text-white font-heading">Anjaska Fairuz Athallah</h4>
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400">Kelas XII PPLG 1 • Absen 21</div>
+            </div>
+          </div>
+
+          <p
+            class="text-xs text-slate-600 dark:text-slate-300 border-t border-slate-200 dark:border-zinc-800 pt-3 font-medium break-words">
+            Bertanggung jawab atas arsitektur sistem SPA, integrasi Cloud Firestore, dan modul latihan soal.
+          </p>
+        </div>
+
+        <!-- Bento 3: Member 2 - Adithia (6 Cols on desktop) -->
+        <div class="md:col-span-12 lg:col-span-6 team-card bento-card p-7 flex flex-col justify-between space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
+              <img src="assets/adith.jpeg" alt="Avatar Adithia Farras"
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-[#34D399] shadow-md" />
+              <span
+                class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#34D399] text-emerald-950 flex items-center justify-center text-xs font-black">2</span>
+            </div>
+            <div class="space-y-1">
+              <span
+                class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase">
+                UI/UX & Game Engineer
+              </span>
+              <h4 class="text-lg font-black text-slate-900 dark:text-white font-heading">Adithia Farras</h4>
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400">Kelas XII PPLG 1 • Absen 06</div>
+            </div>
+          </div>
+
+          <p
+            class="text-xs text-slate-600 dark:text-slate-300 border-t border-slate-200 dark:border-zinc-800 pt-3 font-medium break-words">
+            Merancang antarmuka visual modern, tema dual mode, serta mengolah Mini Game Platformer 2D Canvas.
+          </p>
+        </div>
+
+        <!-- Bento 4: Member 3 - Alexius (6 Cols on desktop) -->
+        <div class="md:col-span-12 lg:col-span-6 team-card bento-card p-7 flex flex-col justify-between space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0">
+              <img src="assets/alex.jpeg" alt="Avatar Alexius Augustian Sihaloho"
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-4 border-[#FACC15] shadow-md" />
+              <span
+                class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FACC15] text-slate-950 flex items-center justify-center text-xs font-black">3</span>
+            </div>
+            <div class="space-y-1">
+              <span
+                class="inline-block px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 text-[10px] font-black uppercase">
+                Content & Math Specialist
+              </span>
+              <h4 class="text-lg font-black text-slate-900 dark:text-white font-heading">Alexius Augustian Sihaloho</h4>
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400">Kelas XII PPLG 1 • Absen 14</div>
+            </div>
+          </div>
+
+          <p
+            class="text-xs text-slate-600 dark:text-slate-300 border-t border-slate-200 dark:border-zinc-800 pt-3 font-medium break-words">
+            Menyusun rangkuman materi komprehensif SD, SMP, SMA, formula LaTeX MathJax, serta kunci pembahasan.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+
+
+  <!-- ================= MODALS SYSTEM ================= -->
+
+  <!-- 1. AUTH MODAL -->
+  <div id="authModal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-white dark:bg-[#181818] rounded-2xl max-w-md w-full p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 relative">
+
+      <button id="btnCloseAuthModal"
+        class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex border-b border-slate-200 dark:border-zinc-800 mb-5">
+        <button id="tabAuthLogin"
+          class="flex-1 py-2.5 font-black text-sm text-[#7C3AED] border-b-2 border-[#7C3AED] font-heading">
+          Masuk Akun
+        </button>
+        <button id="tabAuthRegister"
+          class="flex-1 py-2.5 font-black text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 font-heading">
+          Daftar Baru
+        </button>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email</label>
+          <input type="email" id="loginEmail" required placeholder="nama@siswa.com"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED]">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED]">
+        </div>
+        <button type="submit" class="w-full btn-flat btn-flat-purple py-3 text-sm font-black">
+          Masuk Ke MathVerse
+        </button>
+      </form>
+
+      <form id="registerForm" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
+          <input type="text" id="regFullName" required placeholder="Budi Santoso"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED]">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email</label>
+          <input type="email" id="regEmail" required placeholder="nama@siswa.com"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED]">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+          <input type="password" id="regPassword" required placeholder="Minimal 6 Karakter"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED]">
+        </div>
+        <button type="submit" class="w-full btn-flat btn-flat-purple py-3 text-sm font-black">
+          Daftar Akun Siswa
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- 2. HINT MODAL -->
+  <div id="hintModal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-white dark:bg-[#181818] rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-zinc-800 space-y-4">
+      <div class="flex items-center gap-3 border-b border-slate-200 dark:border-zinc-800 pb-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <h3 class="font-black text-base text-slate-900 dark:text-white font-heading">Petunjuk Pengerjaan</h3>
+      </div>
+
+      <div id="hintModalBody" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 math-container font-medium">
+      </div>
+
+      <button id="btnCloseHintModal" class="w-full btn-flat btn-flat-white py-2.5 text-xs font-bold">
+        Tutup Petunjuk
+      </button>
+    </div>
+  </div>
+
+
+  <!-- 3. SCORE & PEMBAHASAN RESULT MODAL -->
+  <div id="quizScoreResultModal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-white dark:bg-[#181818] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 space-y-6">
+
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
+        <div>
+          <span class="text-xs font-black text-[#7C3AED] uppercase tracking-wider">HASIL EVALUASI</span>
+          <h3 class="text-xl font-black text-slate-900 dark:text-white font-heading">Skor & Pembahasan Kuis</h3>
+        </div>
+        <button id="btnCloseQuizScoreResultModal"
+          class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 text-center p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800">
+        <div>
+          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Total Skor</span>
+          <div id="resultModalScore" class="text-3xl font-black text-[#7C3AED] font-heading">100</div>
+          <span id="resultModalBadge"
+            class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-flat-mint text-emerald-950">
+            Sangat Baik
+          </span>
+        </div>
+        <div>
+          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Jawaban Benar</span>
+          <div id="resultModalCorrect" class="text-xl font-black text-emerald-500 mt-2 font-heading">5 / 5</div>
+        </div>
+        <div>
+          <span class="text-[10px] font-black uppercase text-slate-400 font-heading">Waktu</span>
+          <div id="resultModalTime" class="text-xl font-black text-amber-500 mt-2 font-heading">02:45</div>
+        </div>
+      </div>
+
+      <div id="resultModalPembahasanList" class="space-y-4"></div>
+
+      <div class="pt-4 border-t border-slate-200 dark:border-zinc-800">
+        <button id="btnDoneViewingScore" class="w-full btn-flat btn-flat-purple py-3 text-sm font-black">
+          Selesai & Tutup Pembahasan
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 4. POP-UP HEALING BAR MODAL -->
+  <div id="healingPopUpModal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-white dark:bg-[#181818] rounded-2xl max-w-md w-full p-6 text-center space-y-5 border border-slate-200 dark:border-zinc-800">
+      <div
+        class="w-16 h-16 rounded-2xl bg-flat-yellow text-slate-950 flex items-center justify-center text-3xl font-black mx-auto">
+        <i class="fa-solid fa-gamepad"></i>
+      </div>
+      <div class="space-y-1">
+        <span
+          class="px-3 py-1 rounded-full bg-flat-yellow text-slate-950 text-xs font-black uppercase tracking-wider">HEALING
+          ZONE</span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white font-heading">Capek Mikirin MTK?</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">
+          Yuk healing sejenak dengan main Mini Game Platformer 2D!
+        </p>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="btnHealingLater" class="flex-1 btn-flat btn-flat-white py-2.5 text-xs font-bold">
+          Nanti Saja
+        </button>
+        <button id="btnHealingPlayNow" class="flex-1 btn-flat btn-flat-yellow py-2.5 text-xs font-black">
+          Main Game
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 5. PAST HISTORY DETAIL MODAL -->
+  <div id="historyDetailModal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div
+      class="bg-white dark:bg-[#181818] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 border border-slate-200 dark:border-zinc-800 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
+        <div>
+          <span class="text-xs font-black text-[#7C3AED] uppercase">DETAIL FIRESTORE</span>
+          <h3 id="historyModalTitle" class="text-xl font-black text-slate-900 dark:text-white font-heading">SMA Kelas 12
+            - Easy</h3>
+        </div>
+        <button id="btnCloseHistoryDetailModal"
+          class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="historyModalSummaryBox"
+        class="grid grid-cols-3 gap-2 text-center p-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-xs"></div>
+      <div id="historyModalPembahasanContainer" class="space-y-3"></div>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-white dark:bg-[#181818] border-t border-slate-200 dark:border-zinc-800 py-8 mt-auto relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-[#7C3AED] text-white flex items-center justify-center font-black text-sm">
+          <i class="fa-solid fa-shapes"></i>
+        </div>
+        <span class="font-black text-slate-900 dark:text-white text-base font-heading">MathVerse Indonesia</span>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 text-center font-bold">
+        Modul Belajar Matematika Interaktif &copy; 2026. Designed for smooth learning.
+      </p>
+
+      <div class="flex items-center gap-4 text-xs font-bold text-slate-400">
+        <span class="hover:text-[#7C3AED] cursor-pointer">Syarat</span>
+        <span class="hover:text-[#7C3AED] cursor-pointer">Privasi</span>
+        <span class="hover:text-[#7C3AED] cursor-pointer">Bantuan</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Engine Script -->
+  <script src="script.js"></script>
+</body>
+
+</html>
