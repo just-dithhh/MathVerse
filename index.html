@@ -867,6 +867,25 @@
           </span>
         </div>
 
+        <!-- Login Required Banner for Latihan Soal -->
+        <div id="latihanAuthBanner"
+          class="hidden p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base shrink-0">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+              <strong class="block text-xs font-black font-heading">Login Diperlukan</strong>
+              <span class="text-xs font-semibold opacity-90">Silakan masuk atau buat akun untuk memulai latihan soal dan merekam riwayat belajar.</span>
+            </div>
+          </div>
+          <button type="button" id="btnLatihanLoginPrompt"
+            class="btn-flat btn-flat-purple text-xs font-bold px-4 py-2 shrink-0 min-h-[40px] flex items-center gap-1.5">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Masuk Sekarang</span>
+          </button>
+        </div>
+
         <button id="btnStartConfiguredQuiz"
           class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black flex items-center justify-center gap-2 min-h-[50px]">
           <i class="fa-solid fa-play"></i> Mulai Kerjakan Latihan
@@ -1332,6 +1351,22 @@
         </button>
       </div>
 
+      <!-- Auth Feedback Alerts (Error, Notice, Success) -->
+      <div id="authErrorMessage" class="hidden mb-4 p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-start gap-2.5">
+        <i class="fa-solid fa-circle-exclamation text-sm mt-0.5 shrink-0"></i>
+        <span id="authErrorText">Terjadi kesalahan.</span>
+      </div>
+
+      <div id="authNoticeMessage" class="hidden mb-4 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-start gap-2.5">
+        <i class="fa-solid fa-triangle-exclamation text-sm mt-0.5 shrink-0"></i>
+        <span id="authNoticeText">Silakan masuk untuk melanjutkan.</span>
+      </div>
+
+      <div id="authSuccessMessage" class="hidden mb-4 p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-start gap-2.5">
+        <i class="fa-solid fa-circle-check text-sm mt-0.5 shrink-0"></i>
+        <span id="authSuccessText">Berhasil!</span>
+      </div>
+
       <form id="loginForm" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email</label>
@@ -1343,8 +1378,8 @@
           <input type="password" id="loginPassword" required placeholder="••••••••"
             class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED] min-h-[44px]">
         </div>
-        <button type="submit" class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black min-h-[48px]">
-          Masuk Ke MathVerse
+        <button id="btnLoginSubmit" type="submit" class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black min-h-[48px] flex items-center justify-center gap-2">
+          <span>Masuk Ke MathVerse</span>
         </button>
       </form>
 
@@ -1361,11 +1396,11 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
-          <input type="password" id="regPassword" required placeholder="Minimal 6 Karakter"
+          <input type="password" id="regPassword" required placeholder="Minimal 6 Karakter" minlength="6"
             class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800 text-sm font-medium focus:outline-none focus:border-[#7C3AED] min-h-[44px]">
         </div>
-        <button type="submit" class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black min-h-[48px]">
-          Daftar Akun Siswa
+        <button id="btnRegSubmit" type="submit" class="w-full btn-flat btn-flat-purple py-3.5 text-sm font-black min-h-[48px] flex items-center justify-center gap-2">
+          <span>Daftar Akun Siswa</span>
         </button>
       </form>
 

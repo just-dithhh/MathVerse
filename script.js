@@ -2,14 +2,15 @@
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INITIALIZATION
+// Connected to: MathVerse Education (mathverse-edu-2026)
 // ==========================================
 const firebaseConfig = {
-  apiKey: "AIzaSyAIYCnCxT-dDXFcCQPqRpBVr-lfFsRZ-Fs",
-  authDomain: "mathverse-kalkulus-bbf32.firebaseapp.com",
-  projectId: "mathverse-kalkulus-bbf32",
-  storageBucket: "mathverse-kalkulus-bbf32.firebasestorage.app",
-  messagingSenderId: "840758561326",
-  appId: "1:840758561326:web:21a70ecd578ef7b06cedbf"
+  apiKey: "AIzaSyBfP5D3Z-Jom4RJjgymGZ_9pxhQQoHdQR8",
+  authDomain: "mathverse-edu-2026.firebaseapp.com",
+  projectId: "mathverse-edu-2026",
+  storageBucket: "mathverse-edu-2026.firebasestorage.app",
+  messagingSenderId: "677484632336",
+  appId: "1:677484632336:web:0690bd43236be86ff86d95"
 };
 
 let isFirebaseReady = false;
@@ -18,11 +19,17 @@ let db = null;
 
 try {
   if (typeof firebase !== 'undefined') {
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     auth = firebase.auth();
-    db = firebase.firestore();
+    try {
+      db = firebase.firestore();
+    } catch (fsErr) {
+      console.warn("Firestore initialization fallback:", fsErr);
+    }
     isFirebaseReady = true;
-    console.log("Firebase initialized successfully.");
+    console.log("Firebase initialized successfully with project MathVerse Education (mathverse-edu-2026).");
   }
 } catch (e) {
   console.warn("Firebase initialization fallback mode active.", e);
@@ -47,7 +54,7 @@ function switchSectionSlide(targetSlideId) {
 
   const currentIndex = SLIDE_ORDER.indexOf(currentSlideId);
   const targetIndex = SLIDE_ORDER.indexOf(targetSlideId);
-  
+
   const direction = (targetIndex >= currentIndex) ? "forward" : "backward";
   const currentSection = document.getElementById(currentSlideId);
   const targetSection = document.getElementById(targetSlideId);
@@ -120,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       activeEl.tagName === "SELECT" ||
       activeEl.isContentEditable
     );
-    
+
     const openModals = document.querySelectorAll(".fixed.inset-0:not(.hidden)");
     if (isTyping || openModals.length > 0) return;
 
@@ -223,6 +230,15 @@ const tabAuthLogin = document.getElementById("tabAuthLogin");
 const tabAuthRegister = document.getElementById("tabAuthRegister");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
+const btnLoginSubmit = document.getElementById("btnLoginSubmit");
+const btnRegSubmit = document.getElementById("btnRegSubmit");
+
+const authErrorMessage = document.getElementById("authErrorMessage");
+const authErrorText = document.getElementById("authErrorText");
+const authNoticeMessage = document.getElementById("authNoticeMessage");
+const authNoticeText = document.getElementById("authNoticeText");
+const authSuccessMessage = document.getElementById("authSuccessMessage");
+const authSuccessText = document.getElementById("authSuccessText");
 
 const loggedOutView = document.getElementById("loggedOutView");
 const loggedInView = document.getElementById("loggedInView");
@@ -230,8 +246,72 @@ const userDisplayName = document.getElementById("userDisplayName");
 const btnLogout = document.getElementById("btnLogout");
 const heroUserGreeting = document.getElementById("heroUserGreeting");
 
-function openAuthModal() {
+const latihanAuthBanner = document.getElementById("latihanAuthBanner");
+const btnLatihanLoginPrompt = document.getElementById("btnLatihanLoginPrompt");
+
+function clearAuthMessages() {
+  if (authErrorMessage) authErrorMessage.classList.add("hidden");
+  if (authNoticeMessage) authNoticeMessage.classList.add("hidden");
+  if (authSuccessMessage) authSuccessMessage.classList.add("hidden");
+}
+
+function showAuthError(message) {
+  clearAuthMessages();
+  if (authErrorMessage && authErrorText) {
+    authErrorText.textContent = message;
+    authErrorMessage.classList.remove("hidden");
+  }
+}
+
+function showAuthNotice(message) {
+  clearAuthMessages();
+  if (authNoticeMessage && authNoticeText) {
+    authNoticeText.textContent = message;
+    authNoticeMessage.classList.remove("hidden");
+  }
+}
+
+function showAuthSuccess(message) {
+  clearAuthMessages();
+  if (authSuccessMessage && authSuccessText) {
+    authSuccessText.textContent = message;
+    authSuccessMessage.classList.remove("hidden");
+  }
+}
+
+function getAuthErrorMessage(err) {
+  if (!err) return "Terjadi kesalahan tidak terduga. Silakan coba kembali.";
+  const code = err.code || "";
+  switch (code) {
+    case "auth/invalid-email":
+      return "Format alamat email tidak valid.";
+    case "auth/user-disabled":
+      return "Akun pengguna ini telah dinonaktifkan oleh administrator.";
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+    case "auth/invalid-credential":
+      return "Email atau password yang Anda masukkan salah. Silakan coba lagi.";
+    case "auth/email-already-in-use":
+      return "Alamat email ini sudah terdaftar. Silakan beralih ke tab 'Masuk Akun'.";
+    case "auth/weak-password":
+      return "Password terlalu sederhana. Gunakan minimal 6 karakter kombinasi.";
+    case "auth/operation-not-allowed":
+      return "Layanan pendaftaran akun saat ini belum dibuka.";
+    case "auth/too-many-requests":
+      return "Terlalu banyak percobaan gagal. Silakan tunggu beberapa menit sebelum mencoba lagi.";
+    case "auth/network-request-failed":
+      return "Koneksi terputus. Pastikan perangkat Anda terhubung ke internet.";
+    default:
+      return err.message || "Gagal memproses autentikasi. Silakan periksa kembali formulir Anda.";
+  }
+}
+
+function openAuthModal(noticeMessage = null) {
   if (!authModal) return;
+  clearAuthMessages();
+  if (noticeMessage) {
+    showAuthNotice(noticeMessage);
+  }
   authModal.classList.remove("hidden");
   setTimeout(() => authModal.classList.remove("opacity-0"), 10);
 }
@@ -239,37 +319,51 @@ function openAuthModal() {
 function closeAuthModal() {
   if (!authModal) return;
   authModal.classList.add("opacity-0");
-  setTimeout(() => authModal.classList.add("hidden"), 300);
+  setTimeout(() => {
+    authModal.classList.add("hidden");
+    clearAuthMessages();
+  }, 250);
 }
 
-if (btnOpenAuth) btnOpenAuth.addEventListener("click", openAuthModal);
+if (btnOpenAuth) btnOpenAuth.addEventListener("click", () => openAuthModal());
 if (btnCloseAuthModal) btnCloseAuthModal.addEventListener("click", closeAuthModal);
+
+// Close modal when clicking on outer backdrop
+if (authModal) {
+  authModal.addEventListener("click", (e) => {
+    if (e.target === authModal) closeAuthModal();
+  });
+}
 
 if (tabAuthLogin && tabAuthRegister) {
   tabAuthLogin.addEventListener("click", () => {
-    tabAuthLogin.className = "flex-1 py-3 font-bold text-sm text-sky-500 border-b-2 border-sky-500";
-    tabAuthRegister.className = "flex-1 py-3 font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600";
+    tabAuthLogin.className = "flex-1 py-3 font-black text-sm text-[#7C3AED] border-b-2 border-[#7C3AED] font-heading min-h-[44px]";
+    tabAuthRegister.className = "flex-1 py-3 font-black text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 font-heading min-h-[44px]";
     loginForm.classList.remove("hidden");
     registerForm.classList.add("hidden");
+    clearAuthMessages();
   });
 
   tabAuthRegister.addEventListener("click", () => {
-    tabAuthRegister.className = "flex-1 py-3 font-bold text-sm text-sky-500 border-b-2 border-sky-500";
-    tabAuthLogin.className = "flex-1 py-3 font-bold text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600";
+    tabAuthRegister.className = "flex-1 py-3 font-black text-sm text-[#7C3AED] border-b-2 border-[#7C3AED] font-heading min-h-[44px]";
+    tabAuthLogin.className = "flex-1 py-3 font-black text-sm text-slate-400 border-b-2 border-transparent hover:text-slate-600 font-heading min-h-[44px]";
     registerForm.classList.remove("hidden");
     loginForm.classList.add("hidden");
+    clearAuthMessages();
   });
 }
 
 function updateAuthUI(user) {
   if (user) {
-    const name = user.displayName || user.email.split("@")[0];
+    const name = user.displayName || (user.email ? user.email.split("@")[0] : "Siswa");
     if (loggedOutView) loggedOutView.classList.add("hidden");
     if (loggedInView) loggedInView.classList.remove("hidden");
     if (userDisplayName) userDisplayName.textContent = name;
     if (heroUserGreeting) {
-      heroUserGreeting.innerHTML = `Selamat datang kembali, <strong class="text-sky-500 font-bold">${name}</strong>! Siapkan dirimu untuk belajar matematika secara menyenangkan.`;
+      heroUserGreeting.innerHTML = `Selamat datang kembali, <strong class="text-[#7C3AED] font-bold">${name}</strong>! Siapkan dirimu untuk belajar matematika secara menyenangkan.`;
     }
+    // Sembunyikan banner peringatan login di tab Latihan Soal
+    if (latihanAuthBanner) latihanAuthBanner.classList.add("hidden");
   } else {
     if (loggedOutView) loggedOutView.classList.remove("hidden");
     if (loggedInView) loggedInView.classList.add("hidden");
@@ -277,66 +371,169 @@ function updateAuthUI(user) {
     if (heroUserGreeting) {
       heroUserGreeting.innerHTML = `Jelajahi rangkuman materi lengkap, kerjakan latihan soal berkonfigurasi tingkat kesulitan, dan nikmati game platformer healing interaktif.`;
     }
+    // Tampilkan banner peringatan login di tab Latihan Soal
+    if (latihanAuthBanner) latihanAuthBanner.classList.remove("hidden");
   }
   updateRetakeAttemptUI();
 }
 
+// Handler Submit Form Login
 if (loginForm) {
   loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const email = document.getElementById("loginEmail").value;
+    clearAuthMessages();
+
+    const email = document.getElementById("loginEmail").value.trim();
     const pass = document.getElementById("loginPassword").value;
+
+    if (!email || !pass) {
+      showAuthError("Email dan password wajib diisi.");
+      return;
+    }
+
+    const submitBtn = btnLoginSubmit || loginForm.querySelector("button[type='submit']");
+    const originalText = submitBtn ? submitBtn.innerHTML : "Masuk Ke MathVerse";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Memverifikasi...</span>`;
+    }
 
     if (isFirebaseReady && auth) {
       auth.signInWithEmailAndPassword(email, pass)
-        .then(() => closeAuthModal())
+        .then((cred) => {
+          showAuthSuccess("Berhasil masuk! Menyiapkan dashboard belajar...");
+          loginForm.reset();
+          setTimeout(() => {
+            closeAuthModal();
+            updateAuthUI(cred.user);
+          }, 450);
+        })
         .catch(err => {
-          alert("Login info: " + err.message);
-          updateAuthUI({ displayName: email.split("@")[0], email: email });
-          closeAuthModal();
+          console.warn("Firebase login failed:", err);
+          showAuthError(getAuthErrorMessage(err));
+        })
+        .finally(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
         });
     } else {
-      updateAuthUI({ displayName: email.split("@")[0], email: email });
-      closeAuthModal();
+      // Fallback jika Firebase offline
+      showAuthNotice("Mode offline aktif. Menggunakan sesi simulasi lokal.");
+      setTimeout(() => {
+        updateAuthUI({ displayName: email.split("@")[0], email: email });
+        closeAuthModal();
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 500);
     }
   });
 }
 
+// Handler Submit Form Register
 if (registerForm) {
   registerForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const fullName = document.getElementById("regFullName").value;
-    const email = document.getElementById("regEmail").value;
+    clearAuthMessages();
+
+    const fullName = document.getElementById("regFullName").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
     const pass = document.getElementById("regPassword").value;
+
+    if (!fullName || fullName.length < 2) {
+      showAuthError("Nama lengkap minimal 2 karakter.");
+      return;
+    }
+
+    if (!email) {
+      showAuthError("Alamat email wajib diisi.");
+      return;
+    }
+
+    if (!pass || pass.length < 6) {
+      showAuthError("Password minimal harus 6 karakter.");
+      return;
+    }
+
+    const submitBtn = btnRegSubmit || registerForm.querySelector("button[type='submit']");
+    const originalText = submitBtn ? submitBtn.innerHTML : "Daftar Akun Siswa";
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mendaftarkan Akun...</span>`;
+    }
 
     if (isFirebaseReady && auth) {
       auth.createUserWithEmailAndPassword(email, pass)
-        .then((cred) => cred.user.updateProfile({ displayName: fullName }))
-        .then(() => closeAuthModal())
+        .then((cred) => {
+          return cred.user.updateProfile({ displayName: fullName }).then(() => cred.user);
+        })
+        .then((user) => {
+          showAuthSuccess("Pendaftaran berhasil! Selamat datang di MathVerse.");
+          registerForm.reset();
+          setTimeout(() => {
+            closeAuthModal();
+            updateAuthUI(user);
+          }, 500);
+        })
         .catch(err => {
-          alert("Registrasi info: " + err.message);
-          updateAuthUI({ displayName: fullName, email: email });
-          closeAuthModal();
+          console.warn("Firebase registration failed:", err);
+          showAuthError(getAuthErrorMessage(err));
+        })
+        .finally(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
         });
     } else {
-      updateAuthUI({ displayName: fullName, email: email });
-      closeAuthModal();
+      // Fallback jika Firebase offline
+      showAuthNotice("Mode offline aktif. Mendaftarkan sesi simulasi lokal.");
+      setTimeout(() => {
+        updateAuthUI({ displayName: fullName, email: email });
+        closeAuthModal();
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }, 500);
     }
   });
 }
 
+// Handler Tombol Logout
 if (btnLogout) {
   btnLogout.addEventListener("click", () => {
     if (isFirebaseReady && auth) {
-      auth.signOut().then(() => updateAuthUI(null));
+      auth.signOut()
+        .then(() => updateAuthUI(null))
+        .catch(err => {
+          console.warn("Logout error:", err);
+          updateAuthUI(null);
+        });
     } else {
       updateAuthUI(null);
     }
   });
 }
 
+// Hubungkan tombol trigger prompt login di banner Latihan Soal
+if (btnLatihanLoginPrompt) {
+  btnLatihanLoginPrompt.addEventListener("click", () => {
+    openAuthModal("Silakan masuk atau daftar akun baru untuk memulai pengerjaan latihan soal.");
+  });
+}
+
+// Initial Default Auth State setup
+updateAuthUI(null);
+
+// Firebase Auth State Observer
 if (isFirebaseReady && auth) {
-  auth.onAuthStateChanged(user => updateAuthUI(user));
+  auth.onAuthStateChanged(user => {
+    updateAuthUI(user);
+  });
 }
 
 
@@ -981,11 +1178,10 @@ function renderKelasButtons() {
   classList.forEach(k => {
     const btn = document.createElement("button");
     const isSelected = k === activeKelas;
-    btn.className = `kelas-filter-btn px-4 py-2 rounded-xl text-xs font-bold border ${
-      isSelected
-        ? "active border-emerald-500 bg-emerald-500 text-white"
-        : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
-    } transition`;
+    btn.className = `kelas-filter-btn px-4 py-2 rounded-xl text-xs font-bold border ${isSelected
+      ? "active border-emerald-500 bg-emerald-500 text-white"
+      : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-400"
+      } transition`;
 
     btn.textContent = k === "all" ? `Seluruh Kelas (${activeJenjang === 'SD' ? '1-6' : activeJenjang === 'SMP' ? '7-9' : '10-12'})` : `Kelas ${k}`;
     btn.addEventListener("click", () => {
@@ -1749,7 +1945,7 @@ function generateParametricCurriculumQuestion(jenjang, kelas, seed) {
         pertanyaan: `Segitiga siku-siku memiliki sisi siku-siku berukuran \\(${baseA}\\text{ cm}\\) dan \\(${baseB}\\text{ cm}\\). Panjang sisi miringnya adalah...`,
         opsi_jawaban: [`${hyp} cm`, `${hyp + 2} cm`, `${hyp + 4} cm`, `${baseA + baseB} cm`],
         jawaban_benar: 0,
-        pembahasan: `Panjang sisi miring \\(c = \\sqrt{${baseA}^2 + ${baseB}^2} = \\sqrt{${baseA*baseA + baseB*baseB}} = ${hyp}\\text{ cm}\\).`,
+        pembahasan: `Panjang sisi miring \\(c = \\sqrt{${baseA}^2 + ${baseB}^2} = \\sqrt{${baseA * baseA + baseB * baseB}} = ${hyp}\\text{ cm}\\).`,
         petunjuk: "Gunakan Teorema Pythagoras: \\(c = \\sqrt{a^2 + b^2}\\)."
       };
     } else {
@@ -1759,7 +1955,7 @@ function generateParametricCurriculumQuestion(jenjang, kelas, seed) {
         jenjang: "SMP",
         kelas: targetKelas,
         topik_materi: "Persamaan Kuadrat",
-        pertanyaan: `Akar dari persamaan kuadrat \\(x^2 - ${r*r} = 0\\) adalah...`,
+        pertanyaan: `Akar dari persamaan kuadrat \\(x^2 - ${r * r} = 0\\) adalah...`,
         opsi_jawaban: [`\\(x = \\pm ${r}\\)`, `\\(x = ${r}\\) saja`, `\\(x = -${r}\\) saja`, `\\(x = 0\\)`],
         jawaban_benar: 0,
         pembahasan: `Faktorkan selisih kuadrat: \\((x - ${r})(x + ${r}) = 0 \\implies x = ${r}\\) atau \\(x = -${r}\\).`,
@@ -1794,7 +1990,7 @@ function generateParametricCurriculumQuestion(jenjang, kelas, seed) {
         pertanyaan: `Determinan dari matriks \\(A = \\begin{pmatrix} ${a} & 1 \\\\ 2 & ${d} \\end{pmatrix}\\) adalah...`,
         opsi_jawaban: [`${det}`, `${det + 2}`, `${det - 2}`, `${det + 4}`, `${det + 6}`],
         jawaban_benar: 0,
-        pembahasan: `Determinan: \\(\\det(A) = (${a} \\times ${d}) - (1 \\times 2) = ${a*d} - 2 = ${det}\\).`,
+        pembahasan: `Determinan: \\(\\det(A) = (${a} \\times ${d}) - (1 \\times 2) = ${a * d} - 2 = ${det}\\).`,
         petunjuk: "Hitung dengan rumus determinan matriks 2x2: \\(ad - bc\\)."
       };
     } else {
@@ -1861,11 +2057,10 @@ function renderQuizKategoriOptions() {
     const isKomprehensif = quizConfigKelas === "all";
 
     const btnKomp = document.createElement("button");
-    btnKomp.className = `px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 border ${
-      isKomprehensif
-        ? "active bg-purple-600 border-purple-600 text-white shadow-md ring-2 ring-purple-300 dark:ring-purple-900"
-        : "border-purple-200 dark:border-purple-900/60 bg-white dark:bg-zinc-900 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40"
-    }`;
+    btnKomp.className = `px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 border ${isKomprehensif
+      ? "active bg-purple-600 border-purple-600 text-white shadow-md ring-2 ring-purple-300 dark:ring-purple-900"
+      : "border-purple-200 dark:border-purple-900/60 bg-white dark:bg-zinc-900 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40"
+      }`;
 
     let labelJenjang = "Seluruh Kelas SD";
     let subRange = "Kelas 1-6";
@@ -1908,11 +2103,10 @@ function renderQuizKategoriOptions() {
       const btn = document.createElement("button");
       const isSel = (quizConfigKelas === k);
 
-      btn.className = `quiz-kelas-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
-        isSel
-          ? "active bg-emerald-600 border-emerald-600 text-white shadow-md ring-2 ring-emerald-300 dark:ring-emerald-900"
-          : "border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-700 dark:text-slate-300 hover:border-emerald-300"
-      }`;
+      btn.className = `quiz-kelas-btn px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${isSel
+        ? "active bg-emerald-600 border-emerald-600 text-white shadow-md ring-2 ring-emerald-300 dark:ring-emerald-900"
+        : "border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-700 dark:text-slate-300 hover:border-emerald-300"
+        }`;
 
       btn.innerHTML = `
         <i class="fa-solid fa-graduation-cap ${isSel ? 'text-white' : 'text-emerald-500'} text-[11px]"></i>
@@ -2069,6 +2263,13 @@ function generateQuizQuestions() {
 // ------------------------------------------
 if (btnStartConfiguredQuiz) {
   btnStartConfiguredQuiz.addEventListener("click", () => {
+    // Proteksi Fitur Latihan Soal: Wajib Login Sebelum Mengerjakan
+    const currentUser = (isFirebaseReady && auth) ? auth.currentUser : null;
+    if (!currentUser) {
+      openAuthModal("Wajib masuk (login) akun terlebih dahulu untuk memulai pengerjaan latihan soal.");
+      return;
+    }
+
     quizActiveQuestions = generateQuizQuestions();
     quizUserAnswers = new Array(quizActiveQuestions.length).fill(null);
     quizRaguState = new Array(quizActiveQuestions.length).fill(false);
@@ -2117,18 +2318,16 @@ function loadActiveQuestion(idx) {
     const isSelected = (quizUserAnswers[idx] === oIdx);
 
     const optCard = document.createElement("label");
-    optCard.className = `option-card p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3 sm:gap-3.5 min-h-[52px] select-none ${
-      isSelected
-        ? "selected border-[#7C3AED] bg-purple-50/60 dark:bg-purple-950/40 shadow-sm ring-1 ring-[#7C3AED]"
-        : "border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-purple-300 dark:hover:border-purple-800"
-    }`;
+    optCard.className = `option-card p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3 sm:gap-3.5 min-h-[52px] select-none ${isSelected
+      ? "selected border-[#7C3AED] bg-purple-50/60 dark:bg-purple-950/40 shadow-sm ring-1 ring-[#7C3AED]"
+      : "border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-purple-300 dark:hover:border-purple-800"
+      }`;
 
     optCard.innerHTML = `
       <input type="radio" name="quizOptionRadio" value="${oIdx}" class="w-5 h-5 min-w-[20px] min-h-[20px] text-[#7C3AED] focus:ring-[#7C3AED] border-slate-300 dark:border-zinc-700 cursor-pointer shrink-0" ${isSelected ? "checked" : ""}>
-      <div class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl ${
-        isSelected
-          ? "bg-[#7C3AED] text-white font-black shadow-sm"
-          : "bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 font-bold"
+      <div class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl ${isSelected
+        ? "bg-[#7C3AED] text-white font-black shadow-sm"
+        : "bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 font-bold"
       } flex items-center justify-center text-xs sm:text-sm flex-shrink-0 transition">
         ${letter}
       </div>
@@ -2224,9 +2423,8 @@ function renderQuizPaletteGrid() {
     else if (isAns) bg = "bg-emerald-600 text-white font-bold border-emerald-600";
 
     const btn = document.createElement("button");
-    btn.className = `palette-btn w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl text-xs flex items-center justify-center transition ${bg} ${
-      isCur ? "active ring-2 ring-[#7C3AED] font-black scale-105" : ""
-    }`;
+    btn.className = `palette-btn w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl text-xs flex items-center justify-center transition ${bg} ${isCur ? "active ring-2 ring-[#7C3AED] font-black scale-105" : ""
+      }`;
     btn.textContent = idx + 1;
     btn.addEventListener("click", () => loadActiveQuestion(idx));
     grid.appendChild(btn);
@@ -2380,11 +2578,10 @@ function renderQuickMap() {
   quizActiveQuestions.forEach((q, idx) => {
     const isCorr = (quizUserAnswers[idx] === q.correct);
     const btn = document.createElement("button");
-    btn.className = `w-8 h-8 rounded-xl text-xs font-black transition flex items-center justify-center ${
-      isCorr
-        ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-300 dark:ring-emerald-900"
-        : "bg-rose-500 hover:bg-rose-600 text-white shadow-sm ring-1 ring-rose-300 dark:ring-rose-900"
-    }`;
+    btn.className = `w-8 h-8 rounded-xl text-xs font-black transition flex items-center justify-center ${isCorr
+      ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-300 dark:ring-emerald-900"
+      : "bg-rose-500 hover:bg-rose-600 text-white shadow-sm ring-1 ring-rose-300 dark:ring-rose-900"
+      }`;
     btn.innerHTML = `${idx + 1}`;
     btn.title = `Soal ${idx + 1}: ${isCorr ? 'Jawaban Benar' : 'Jawaban Salah'}`;
     btn.addEventListener("click", () => {
@@ -2426,11 +2623,10 @@ function renderReviewList(filterMode) {
 
     const card = document.createElement("div");
     card.id = `review-card-${idx}`;
-    card.className = `p-5 sm:p-6 rounded-2xl border-2 transition ${
-      isCorr
-        ? "border-emerald-300/80 dark:border-emerald-900/60 bg-emerald-50/15 dark:bg-emerald-950/10 shadow-sm"
-        : "border-rose-300/80 dark:border-rose-900/60 bg-rose-50/15 dark:bg-rose-950/10 shadow-sm"
-    } space-y-4`;
+    card.className = `p-5 sm:p-6 rounded-2xl border-2 transition ${isCorr
+      ? "border-emerald-300/80 dark:border-emerald-900/60 bg-emerald-50/15 dark:bg-emerald-950/10 shadow-sm"
+      : "border-rose-300/80 dark:border-rose-900/60 bg-rose-50/15 dark:bg-rose-950/10 shadow-sm"
+      } space-y-4`;
 
     const userAnsText = quizUserAnswers[idx] !== null ? q.options[quizUserAnswers[idx]] : "Belum Dijawab";
     const correctAnsText = q.options[q.correct];
@@ -2452,15 +2648,14 @@ function renderReviewList(filterMode) {
         </div>
 
         <div>
-          ${
-            isCorr
-              ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+          ${isCorr
+        ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                    <i class="fa-solid fa-circle-check"></i> Jawaban Benar (+${pointPerQuestion} Poin)
                  </span>`
-              : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">
+        : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300">
                    <i class="fa-solid fa-circle-xmark"></i> Jawaban Salah (0 Poin)
                  </span>`
-          }
+      }
         </div>
       </div>
 
@@ -2476,11 +2671,10 @@ function renderReviewList(filterMode) {
 
       <!-- Perbandingan Jawaban -->
       <div class="grid sm:grid-cols-2 gap-3 text-xs">
-        <div class="p-3.5 rounded-xl border ${
-          isCorr
-            ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
-            : 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800'
-        } space-y-1">
+        <div class="p-3.5 rounded-xl border ${isCorr
+        ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800'
+        : 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800'
+      } space-y-1">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-black uppercase tracking-wider ${isCorr ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'} font-heading">
               <i class="fa-solid ${isCorr ? 'fa-check' : 'fa-xmark'} mr-1"></i> Jawaban Anda ${isCorr ? '(Tepat)' : '(Kurang Tepat)'}:
@@ -2510,14 +2704,13 @@ function renderReviewList(filterMode) {
         <div class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed math-container">
           ${q.solution}
         </div>
-        ${
-          q.hint
-            ? `<div class="mt-2.5 pt-2 border-t border-purple-200/60 dark:border-purple-900/40 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5 font-medium">
+        ${q.hint
+        ? `<div class="mt-2.5 pt-2 border-t border-purple-200/60 dark:border-purple-900/40 text-xs text-amber-600 dark:text-amber-400 flex items-start gap-1.5 font-medium">
                  <i class="fa-solid fa-lightbulb mt-0.5"></i>
                  <span><strong>Petunjuk / Konsep:</strong> ${q.hint}</span>
                </div>`
-            : ''
-        }
+        : ''
+      }
       </div>
     `;
 
@@ -2773,7 +2966,7 @@ function openHistoryDetailModal(item) {
   if (!modal) return;
 
   document.getElementById("historyModalTitle").textContent = `${item.jenjang} Kelas ${item.kelas} - ${item.difficulty} (Percobaan #${item.attemptNumber || 1})`;
-  
+
   const sumBox = document.getElementById("historyModalSummaryBox");
   sumBox.innerHTML = `
     <div>
