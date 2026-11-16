@@ -202,6 +202,8 @@ function closeMobileMenu() {
 }
 
 if (btnMobileMenu) btnMobileMenu.addEventListener("click", openMobileMenu);
+const btnBottomNavMenu = document.getElementById("btnBottomNavMenu");
+if (btnBottomNavMenu) btnBottomNavMenu.addEventListener("click", openMobileMenu);
 if (btnCloseMobileMenu) btnCloseMobileMenu.addEventListener("click", closeMobileMenu);
 if (mobileBackdrop) {
   mobileBackdrop.addEventListener("click", (e) => {
@@ -1075,8 +1077,8 @@ function openMaterialDetail(t) {
   propsBody.innerHTML = "";
   t.properties.forEach(p => {
     const pCard = document.createElement("div");
-    pCard.className = "p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 space-y-2 shadow-sm transition";
-    pCard.innerHTML = `<strong class="text-sky-600 dark:text-sky-400 font-bold block text-sm font-heading">${p.title}</strong><div class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">${p.desc}</div>`;
+    pCard.className = "p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 space-y-2 shadow-sm transition overflow-x-auto";
+    pCard.innerHTML = `<strong class="text-sky-600 dark:text-sky-400 font-bold block text-sm font-heading">${p.title}</strong><div class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed math-container">${p.desc}</div>`;
     propsBody.appendChild(pCard);
   });
 
@@ -2115,22 +2117,22 @@ function loadActiveQuestion(idx) {
     const isSelected = (quizUserAnswers[idx] === oIdx);
 
     const optCard = document.createElement("label");
-    optCard.className = `option-card p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3.5 ${
+    optCard.className = `option-card p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition flex items-center gap-3 sm:gap-3.5 min-h-[52px] select-none ${
       isSelected
         ? "selected border-[#7C3AED] bg-purple-50/60 dark:bg-purple-950/40 shadow-sm ring-1 ring-[#7C3AED]"
         : "border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-purple-300 dark:hover:border-purple-800"
     }`;
 
     optCard.innerHTML = `
-      <input type="radio" name="quizOptionRadio" value="${oIdx}" class="w-4 h-4 text-[#7C3AED] focus:ring-[#7C3AED] border-slate-300 dark:border-zinc-700" ${isSelected ? "checked" : ""}>
-      <div class="w-9 h-9 rounded-xl ${
+      <input type="radio" name="quizOptionRadio" value="${oIdx}" class="w-5 h-5 min-w-[20px] min-h-[20px] text-[#7C3AED] focus:ring-[#7C3AED] border-slate-300 dark:border-zinc-700 cursor-pointer shrink-0" ${isSelected ? "checked" : ""}>
+      <div class="w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl ${
         isSelected
           ? "bg-[#7C3AED] text-white font-black shadow-sm"
           : "bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 font-bold"
-      } flex items-center justify-center text-xs flex-shrink-0 transition">
+      } flex items-center justify-center text-xs sm:text-sm flex-shrink-0 transition">
         ${letter}
       </div>
-      <div class="text-sm font-semibold text-slate-800 dark:text-slate-200 math-container flex-grow leading-relaxed">
+      <div class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 math-container flex-grow leading-relaxed">
         ${opt}
       </div>
       ${isSelected ? '<i class="fa-solid fa-circle-check text-[#7C3AED] text-xl flex-shrink-0"></i>' : ''}
@@ -2222,7 +2224,7 @@ function renderQuizPaletteGrid() {
     else if (isAns) bg = "bg-emerald-600 text-white font-bold border-emerald-600";
 
     const btn = document.createElement("button");
-    btn.className = `palette-btn w-9 h-9 rounded-xl text-xs flex items-center justify-center transition ${bg} ${
+    btn.className = `palette-btn w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl text-xs flex items-center justify-center transition ${bg} ${
       isCur ? "active ring-2 ring-[#7C3AED] font-black scale-105" : ""
     }`;
     btn.textContent = idx + 1;
